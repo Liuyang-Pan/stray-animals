@@ -2,7 +2,9 @@ package cn.basicPLY.animals.controller;
 
 import cn.basicPLY.animals.entity.StrayAnimalsUser;
 import cn.basicPLY.animals.service.CertificationService;
-import cn.basicPLY.animals.units.AjaxResult;
+import cn.basicPLY.animals.utils.AjaxResult;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * @author Pan Liuyang
  * 2022/4/5 22:37
  */
+@Api(tags = "用户相关接口")
 @Slf4j
 @RestController
 @RequestMapping("/certification")
@@ -30,6 +33,7 @@ public class CertificationController {
      * @param strayAnimalsUser 用户实体
      * @return 注册成功与否标识
      */
+    @ApiOperation("用户注册接口")
     @PostMapping("/registered")
     public ResponseEntity<AjaxResult> registeredUser(@RequestBody StrayAnimalsUser strayAnimalsUser) {
         ResponseEntity<AjaxResult> resultResponseEntity = certificationService.checkParameters(strayAnimalsUser);
@@ -44,6 +48,13 @@ public class CertificationController {
         return resultResponseEntity;
     }
 
+    /**
+     * 修改用户接口
+     *
+     * @param strayAnimalsUser 用户实体
+     * @return 修改成功与否结果
+     */
+    @ApiOperation("修改用户接口")
     @PutMapping("/modify")
     public ResponseEntity<AjaxResult> modifyUser(@RequestBody StrayAnimalsUser strayAnimalsUser) {
         ResponseEntity<AjaxResult> resultResponseEntity = certificationService.checkParameters(strayAnimalsUser);

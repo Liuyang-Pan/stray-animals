@@ -2,7 +2,7 @@ package cn.basicPLY.animals.config;
 
 import cn.basicPLY.animals.entity.CertificationUserDetails;
 import cn.basicPLY.animals.service.impl.StrayAnimalsUserDetailsServiceImpl;
-import cn.basicPLY.animals.units.AjaxResult;
+import cn.basicPLY.animals.utils.AjaxResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,14 +14,9 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.JdbcUserDetailsManager;
 
-import javax.sql.DataSource;
 import java.io.PrintWriter;
 
 /**
@@ -75,7 +70,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 .antMatchers("/*/admin/**").hasRole("admin")
                 .antMatchers("/*/user/**").hasRole("user")
-                .antMatchers("/certification/**", "/file/**").permitAll() //permitAll() /certification/**所以请求均可访问
+                .antMatchers("/certification/**", "/file/**", "/swagger-ui/**",
+                        "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**", "/v3/**")
+                .permitAll() //permitAll() /certification/**所以请求均可访问
                 .anyRequest().authenticated() //authenticated()需要认证访问
                 .and()
                 .formLogin()

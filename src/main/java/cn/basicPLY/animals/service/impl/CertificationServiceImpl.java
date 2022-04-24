@@ -7,7 +7,7 @@ import cn.basicPLY.animals.enumerate.UserEnum;
 import cn.basicPLY.animals.service.CertificationService;
 import cn.basicPLY.animals.service.StrayAnimalsUserAuthorityService;
 import cn.basicPLY.animals.service.StrayAnimalsUserService;
-import cn.basicPLY.animals.units.AjaxResult;
+import cn.basicPLY.animals.utils.AjaxResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;

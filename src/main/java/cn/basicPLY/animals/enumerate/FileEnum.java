@@ -45,4 +45,21 @@ public enum FileEnum {
     public String getRelativePath() {
         return relativePath;
     }
+
+    /**
+     * 通过类型CODE获取绝对存储路径
+     *
+     * @param typeCode 类型CODE
+     * @return 绝对存储路径
+     */
+    public static String getPathByTypeCode(String typeCode) {
+        FileEnum[] fileEnums = values();
+        for (FileEnum fileEnum : fileEnums) {
+            if (fileEnum.getTypeCode().equals(typeCode)) {
+                return fileEnum.getRelativePath();
+            }
+        }
+        return null;
+//        Arrays.stream(FileEnum.values()).filter(fileEnum -> fileEnum.typeCode.equals(typeCode));
+    }
 }

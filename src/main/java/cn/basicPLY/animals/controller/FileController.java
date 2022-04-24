@@ -4,7 +4,12 @@ import cn.basicPLY.animals.entity.StrayAnimalsFile;
 import cn.basicPLY.animals.enumerate.FileEnum;
 import cn.basicPLY.animals.enumerate.UserEnum;
 import cn.basicPLY.animals.service.StrayAnimalsFileService;
-import cn.basicPLY.animals.units.AjaxResult;
+import cn.basicPLY.animals.utils.AjaxResult;
+import cn.basicPLY.animals.utils.UserUtils;
+import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +23,7 @@ import java.io.*;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * purpose:文件相关Controller
@@ -29,6 +31,7 @@ import java.util.UUID;
  * @author Pan Liuyang
  * 2022/4/23 16:40
  */
+@Api(tags = "文件上传相关接口")
 @Slf4j
 @RestController
 @RequestMapping("/file")
@@ -42,12 +45,18 @@ public class FileController {
 
     private final List<String> uploadImageTypes = Arrays.asList("image/png", "image/jpg", "image/jpeg", "image/gif", "image/bmp");
 
+    @ApiOperation("上传图片接口")
     @PostMapping("/uploadImage")
     public ResponseEntity<AjaxResult> uploadImage(@RequestParam("multipartFile") MultipartFile multipartFile,
                                                   @RequestParam("fileCategory") String fileCategory) {
 
         if (multipartFile.isEmpty()) {
             return new ResponseEntity<>(AjaxResult.error("请选择图片"), HttpStatus.BAD_REQUEST);
+        }
+        //转换文件类别为绝对路径
+        String relativePath = FileEnum.getPathByTypeCode(fileCategory);
+        if (StringUtils.isBlank(relativePath)) {
+            return new ResponseEntity<>(AjaxResult.error("文件类别错误"), HttpStatus.BAD_REQUEST);
         }
 
         //检查格式
@@ -78,7 +87,7 @@ public class FileController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
         String format = simpleDateFormat.format(new Date());
 
-        String path = fileUploadPath + "/" + format; //文件存储位置
+        String path = fileUploadPath + "/" + relativePath + "/" + format; //文件存储位置
         fileName = UUID.randomUUID() + suffixName;//图片名
         String imageUrl = path + "/" + fileName;//图片的url
         log.info("图片URL：" + imageUrl);
@@ -90,9 +99,16 @@ public class FileController {
             multipartFile.transferTo(dest);
             //上传文件相关数据写入数据库
             StrayAnimalsFile strayAnimalsFile = new StrayAnimalsFile();
+            //文件名
             strayAnimalsFile.setFileName(multipartFile.getOriginalFilename());
-            strayAnimalsFile.setFilePath(FileEnum.STRAY_ANIMALS_ADOPTION.getRelativePath() + format + fileName);
-            strayAnimalsFile.setCreateBy(UserEnum.USER_ADMIN.getName());
+            //文件路径
+            strayAnimalsFile.setFilePath("/" + relativePath + "/" + format + "/" + fileName);
+            //文件类别代码
+            strayAnimalsFile.setFileCategory(fileCategory);
+            //创建人
+            strayAnimalsFile.setCreateBy(ObjectUtils.isNotEmpty(UserUtils.getUserDetails()) && StringUtils.isNotEmpty(UserUtils.getUserDetails().getNickName()) ?
+                    UserUtils.getUserDetails().getNickName() : UserEnum.USER_ADMIN.getName());
+            //创建时间
             strayAnimalsFile.setCreateDate(new Date());
             if (fileService.getBaseMapper().insert(strayAnimalsFile) > 0) {
                 return new ResponseEntity<>(AjaxResult.success("上传成功", imageUrl), HttpStatus.OK);
@@ -103,6 +119,7 @@ public class FileController {
         return new ResponseEntity<>(AjaxResult.error("上传失败", imageUrl), HttpStatus.BAD_REQUEST);
     }
 
+    @ApiOperation("获取图片接口")
     @GetMapping("/getImage")
     public void getImage(@RequestParam String imageUrl, HttpServletResponse response) {
         if (imageUrl != null) {
@@ -110,28 +127,37 @@ public class FileController {
             FileInputStream in = null;
             OutputStream out = null;
             try {
-                File file = new File(imageUrl);
-                if (!file.exists()) {
-                    throw new RuntimeException("文件不存在");
-                }
-                in = new FileInputStream(imageUrl);
-                int i = in.available();
-                byte[] buffer = new byte[i];
-                in.read(buffer);
+//                File file = new File(fileUploadPath + imageUrl);
+//                if (!file.exists()) {
+//                    throw new RuntimeException("文件不存在");
+//                }
+                in = new FileInputStream(fileUploadPath + imageUrl);
+
                 //设置输出流内容格式为图片格式
                 response.setContentType("image/jpeg");
                 //response的响应的编码方式为utf-8
                 response.setCharacterEncoding("utf-8");
                 out = response.getOutputStream();
-                out.write(buffer);
+
+                int hasRead = 0;
+                byte[] buffer = new byte[8];
+                while ((hasRead = in.read(buffer)) != -1) {
+                    out.write(buffer, 0, hasRead);
+                }
+                in.close();
+                out.close();
             } catch (Exception e) {
                 throw new RuntimeException("网络错误", e);
             } finally {
                 try {
-                    in.close();
-                    out.close();
+                    if (ObjectUtils.isNotEmpty(in)) {
+                        in.close();
+                    }
+                    if (ObjectUtils.isNotEmpty(out)) {
+                        out.close();
+                    }
                 } catch (IOException e) {
-                    throw new RuntimeException("网络错误", e);
+                    e.printStackTrace();
                 }
             }
         }

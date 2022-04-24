@@ -1,7 +1,7 @@
 package cn.basicPLY.animals.service;
 
 import cn.basicPLY.animals.entity.StrayAnimalsUser;
-import cn.basicPLY.animals.units.AjaxResult;
+import cn.basicPLY.animals.utils.AjaxResult;
 import org.springframework.http.ResponseEntity;
 
 /**
