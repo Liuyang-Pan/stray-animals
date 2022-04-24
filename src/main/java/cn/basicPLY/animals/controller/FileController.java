@@ -45,7 +45,7 @@ public class FileController {
 
     private final List<String> uploadImageTypes = Arrays.asList("image/png", "image/jpg", "image/jpeg", "image/gif", "image/bmp");
 
-    @ApiOperation("上传图片接口")
+    @ApiOperation("上传图片接口-Content-Type设置成multipart/form-data")
     @PostMapping("/uploadImage")
     public ResponseEntity<AjaxResult> uploadImage(@RequestParam("multipartFile") MultipartFile multipartFile,
                                                   @RequestParam("fileCategory") String fileCategory) {
