@@ -1,11 +1,14 @@
 package cn.basicPLY.animals.controller;
 
 import cn.basicPLY.animals.entity.StrayAnimalsFile;
+import cn.basicPLY.animals.entity.VO.FileReturnParameterVO;
 import cn.basicPLY.animals.enumerate.FileEnum;
+import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
 import cn.basicPLY.animals.enumerate.UserEnum;
 import cn.basicPLY.animals.service.StrayAnimalsFileService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import cn.basicPLY.animals.utils.UserUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import io.swagger.annotations.Api;
@@ -31,7 +34,7 @@ import java.util.*;
  * @author Pan Liuyang
  * 2022/4/23 16:40
  */
-@Api(tags = "文件上传相关接口")
+@Api(tags = "文件相关接口")
 @Slf4j
 @RestController
 @RequestMapping("/file")
@@ -111,12 +114,17 @@ public class FileController {
             //创建时间
             strayAnimalsFile.setCreateDate(new Date());
             if (fileService.getBaseMapper().insert(strayAnimalsFile) > 0) {
-                return new ResponseEntity<>(AjaxResult.success("上传成功", imageUrl), HttpStatus.OK);
+                //构建返回实体
+                FileReturnParameterVO fileReturnParameterVO = new FileReturnParameterVO();
+                fileReturnParameterVO.setFileId(strayAnimalsFile.getKeyId());
+                fileReturnParameterVO.setFileName(strayAnimalsFile.getFileName());
+                fileReturnParameterVO.setRelativePath(strayAnimalsFile.getFilePath());
+                return new ResponseEntity<>(AjaxResult.success("上传成功", fileReturnParameterVO), HttpStatus.OK);
             }
             return new ResponseEntity<>(AjaxResult.error("上传失败"), HttpStatus.BAD_REQUEST);
         } catch (IOException ignored) {
         }
-        return new ResponseEntity<>(AjaxResult.error("上传失败", imageUrl), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(AjaxResult.error("上传失败"), HttpStatus.BAD_REQUEST);
     }
 
     @ApiOperation("获取图片接口")
@@ -161,5 +169,17 @@ public class FileController {
                 }
             }
         }
+    }
+
+    @ApiOperation("获取首页Banner图")
+    @GetMapping("/getBanner")
+    public ResponseEntity<AjaxResult> getBanner() {
+        //构建首页Banner图查询条件
+        QueryWrapper<StrayAnimalsFile> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("file_category", FileEnum.STRAY_ANIMALS_BANNER.getTypeCode()).eq(UniversalColumnEnum.DELETE_MARK.getColumn(), 1);
+        //获取Banner图
+        List<StrayAnimalsFile> strayAnimalsFiles = fileService.getBaseMapper().selectList(queryWrapper);
+        queryWrapper.clear();
+        return new ResponseEntity<>(AjaxResult.success("获取成功", strayAnimalsFiles), HttpStatus.OK);
     }
 }

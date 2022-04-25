@@ -10,8 +10,12 @@ public enum FileEnum {
     /**
      * 领养模块文件类型
      */
-    STRAY_ANIMALS_ADOPTION("领养", "STRAY_ANIMALS_ADOPTION", "adoption");
+    STRAY_ANIMALS_ADOPTION("领养", "STRAY_ANIMALS_ADOPTION", "adoption"),
 
+    /**
+     * Banner图
+     */
+    STRAY_ANIMALS_BANNER("首页横幅轮播图", "STRAY_ANIMALS_BANNER", "banner");
     /**
      * 类型名称
      */

@@ -1,6 +1,6 @@
 package cn.basicPLY.animals.service.impl;
 
-import cn.basicPLY.animals.entity.CertificationUserDetails;
+import cn.basicPLY.animals.entity.VO.CertificationUserDetails;
 import cn.basicPLY.animals.entity.StrayAnimalsUser;
 import cn.basicPLY.animals.entity.StrayAnimalsUserAuthority;
 import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
@@ -55,7 +55,7 @@ public class StrayAnimalsUserDetailsServiceImpl implements UserDetailsService {
         //创建查询条件
         QueryWrapper<StrayAnimalsUserAuthority> userAuthorityQueryWrapper = new QueryWrapper<>();
         //设置通过用户ID获取角色权限
-        userAuthorityQueryWrapper.eq("user_key_id", strayAnimalsUser.getKeyId());
+        userAuthorityQueryWrapper.eq("user_key_id", strayAnimalsUser.getKeyId()).eq(UniversalColumnEnum.DELETE_MARK.getColumn(), 1);
         //注入权限参数
         certificationUserDetails.setUserAuthorities(strayAnimalsUserAuthorityMapper.selectList(userAuthorityQueryWrapper));
         //非空返回用户实体

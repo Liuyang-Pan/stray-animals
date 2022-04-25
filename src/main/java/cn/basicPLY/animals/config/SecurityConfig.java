@@ -1,6 +1,6 @@
 package cn.basicPLY.animals.config;
 
-import cn.basicPLY.animals.entity.CertificationUserDetails;
+import cn.basicPLY.animals.entity.VO.CertificationUserDetails;
 import cn.basicPLY.animals.service.impl.StrayAnimalsUserDetailsServiceImpl;
 import cn.basicPLY.animals.utils.AjaxResult;
 import com.fasterxml.jackson.databind.ObjectMapper;

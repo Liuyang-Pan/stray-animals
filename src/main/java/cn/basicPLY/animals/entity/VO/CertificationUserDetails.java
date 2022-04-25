@@ -1,5 +1,7 @@
-package cn.basicPLY.animals.entity;
+package cn.basicPLY.animals.entity.VO;
 
+import cn.basicPLY.animals.entity.StrayAnimalsUser;
+import cn.basicPLY.animals.entity.StrayAnimalsUserAuthority;
 import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

@@ -1,6 +1,6 @@
 package cn.basicPLY.animals.utils;
 
-import cn.basicPLY.animals.entity.CertificationUserDetails;
+import cn.basicPLY.animals.entity.VO.CertificationUserDetails;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
