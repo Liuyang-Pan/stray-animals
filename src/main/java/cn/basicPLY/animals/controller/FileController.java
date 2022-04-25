@@ -90,7 +90,7 @@ public class FileController {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMM");
         String format = simpleDateFormat.format(new Date());
 
-        String path = fileUploadPath + "/" + relativePath + "/" + format; //文件存储位置
+        String path = fileUploadPath + relativePath + "/" + format; //文件存储位置
         fileName = UUID.randomUUID() + suffixName;//图片名
         String imageUrl = path + "/" + fileName;//图片的url
         log.info("图片URL：" + imageUrl);
@@ -105,7 +105,7 @@ public class FileController {
             //文件名
             strayAnimalsFile.setFileName(multipartFile.getOriginalFilename());
             //文件路径
-            strayAnimalsFile.setFilePath("/" + relativePath + "/" + format + "/" + fileName);
+            strayAnimalsFile.setFilePath(relativePath + "/" + format + "/" + fileName);
             //文件类别代码
             strayAnimalsFile.setFileCategory(fileCategory);
             //创建人

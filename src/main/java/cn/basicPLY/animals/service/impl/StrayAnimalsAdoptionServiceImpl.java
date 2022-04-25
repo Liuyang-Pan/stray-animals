@@ -1,10 +1,14 @@
 package cn.basicPLY.animals.service.impl;
 
+import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
 import cn.basicPLY.animals.mapper.StrayAnimalsAdoptionMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author Administrator
@@ -15,6 +19,10 @@ import org.springframework.stereotype.Service;
 public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdoptionMapper, StrayAnimalsAdoption>
     implements StrayAnimalsAdoptionService{
 
+    @Override
+    public List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page, String userId, String adoptionTitle) {
+        return baseMapper.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
+    }
 }
 
 
