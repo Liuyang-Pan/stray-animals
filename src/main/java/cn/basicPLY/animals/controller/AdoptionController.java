@@ -84,13 +84,11 @@ public class AdoptionController {
      */
     @ApiOperation("获取领养列表")
     @GetMapping("/getAdoptionList")
-    public ResponseEntity<IPage<StrayAnimalsAdoptionVO>> getAdoptionList(@RequestParam(required = false) long current,
-                                                                         @RequestParam(required = false) long size,
+    public ResponseEntity<IPage<StrayAnimalsAdoptionVO>> getAdoptionList(Page<StrayAnimalsAdoptionVO> page,
                                                                          @RequestParam(required = false) String userId,
                                                                          @RequestParam(required = false) String adoptionTitle) {
-        Page<StrayAnimalsAdoptionVO> adoptionVOPage = new Page<>(current, size);
-        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(adoptionVOPage, userId, adoptionTitle);
-        adoptionVOPage.setRecords(strayAnimalsAdoptionVOS);
-        return new ResponseEntity<>(adoptionVOPage, HttpStatus.OK);
+        //分页查询
+        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
+        return new ResponseEntity<>(page.setRecords(strayAnimalsAdoptionVOS), HttpStatus.OK);
     }
 }

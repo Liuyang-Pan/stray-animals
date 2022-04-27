@@ -2,6 +2,7 @@ package cn.basicPLY.animals.service.impl;
 
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;

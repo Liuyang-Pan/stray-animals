@@ -3,6 +3,7 @@ package cn.basicPLY.animals.service;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 public interface StrayAnimalsAdoptionService extends IService<StrayAnimalsAdoption> {
 
     List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page,
-                                                                  String userId,
-                                                                  String adoptionTitle);
+                                                                   String userId,
+                                                                   String adoptionTitle);
 
 }

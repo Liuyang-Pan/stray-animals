@@ -4,6 +4,8 @@ import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+
 import java.util.List;
 
 /**
@@ -23,8 +25,8 @@ public interface StrayAnimalsAdoptionMapper extends BaseMapper<StrayAnimalsAdopt
      * @return 返回数据列表
      */
     List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page,
-                                                                  String userId,
-                                                                  String adoptionTitle);
+                                                                   String userId,
+                                                                   String adoptionTitle);
 }
 
 

@@ -33,15 +33,15 @@
         <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
         <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
         <collection property="strayAnimalsFiles" ofType="cn.basicPLY.animals.entity.StrayAnimalsFile">
-            <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
+            <id property="keyId" column="file_key_id" jdbcType="VARCHAR"/>
             <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
             <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
             <result property="fileCategory" column="file_category" jdbcType="VARCHAR"/>
-            <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
-            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
-            <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
-            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
-            <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+            <result property="deleteMark" column="file_delete_mark" jdbcType="TINYINT"/>
+            <result property="createBy" column="file_create_by" jdbcType="VARCHAR"/>
+            <result property="createDate" column="file_create_date" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="file_update_by" jdbcType="VARCHAR"/>
+            <result property="updateDate" column="file_update_date" jdbcType="TIMESTAMP"/>
         </collection>
     </resultMap>
 
@@ -54,24 +54,24 @@
 
     <select id="selectStrayAnimalsAdoptionPageVO" resultMap="StrayAnimalsAdoptionVO">
         SELECT SAA.key_id,
-               SAA.adoption_title,
-               SAA.adoption_content,
-               SAA.adoption_address,
-               SAA.adoption_phone_number,
-               SAA.adoption_state,
-               SAA.create_by,
-               SAA.create_date,
-               SAA.update_by,
-               SAA.update_date,
+        SAA.adoption_title,
+        SAA.adoption_content,
+        SAA.adoption_address,
+        SAA.adoption_phone_number,
+        SAA.adoption_state,
+        SAA.create_by,
+        SAA.create_date,
+        SAA.update_by,
+        SAA.update_date,
 
-               SAF.key_id,
-               SAF.file_name,
-               SAF.file_category,
-               SAF.file_path,
-               SAF.create_by,
-               SAF.create_date,
-               SAF.update_by,
-               SAF.update_date
+        SAF.key_id AS file_key_id,
+        SAF.file_name,
+        SAF.file_category,
+        SAF.file_path,
+        SAF.create_by AS file_create_by,
+        SAF.create_date AS file_create_date,
+        SAF.update_by AS file_update_by,
+        SAF.update_date AS file_update_date
         FROM stray_animals_adoption SAA
         LEFT JOIN stray_animals_adoption_file SAAF ON SAA.key_id = SAAF.adoption_id AND SAAF.delete_mark = 1
         LEFT JOIN stray_animals_file SAF ON SAAF.file_id = SAF.key_id AND SAF.delete_mark = 1
