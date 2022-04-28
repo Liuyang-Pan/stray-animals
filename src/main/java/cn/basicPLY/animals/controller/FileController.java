@@ -36,6 +36,7 @@ import java.util.*;
  */
 @Api(tags = "文件相关接口")
 @Slf4j
+@CrossOrigin
 @RestController
 @RequestMapping("/file")
 public class FileController {

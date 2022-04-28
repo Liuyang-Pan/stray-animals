@@ -6,7 +6,10 @@
 
     <resultMap id="BaseResultMap" type="cn.basicPLY.animals.entity.StrayAnimalsAdoption">
         <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
-        <result property="adoptionTitle" column="adoption_title" jdbcType="VARCHAR"/>
+        <result property="animalType" column="animal_type" jdbcType="VARCHAR"/>
+        <result property="animalAge" column="animal_age" jdbcType="VARCHAR"/>
+        <result property="animalBreed" column="animal_breed" jdbcType="VARCHAR"/>
+        <result property="animalSex" column="animal_sex" jdbcType="VARCHAR"/>
         <result property="adoptionContent" column="adoption_content" jdbcType="VARCHAR"/>
         <result property="adoptionState" column="adoption_state" jdbcType="TINYINT"/>
         <result property="adoptionAddress" column="adoption_address" jdbcType="VARCHAR"/>
@@ -21,7 +24,10 @@
 
     <resultMap id="StrayAnimalsAdoptionVO" type="cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO">
         <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
-        <result property="adoptionTitle" column="adoption_title" jdbcType="VARCHAR"/>
+        <result property="animalType" column="animal_type" jdbcType="VARCHAR"/>
+        <result property="animalAge" column="animal_age" jdbcType="VARCHAR"/>
+        <result property="animalBreed" column="animal_breed" jdbcType="VARCHAR"/>
+        <result property="animalSex" column="animal_sex" jdbcType="VARCHAR"/>
         <result property="adoptionContent" column="adoption_content" jdbcType="VARCHAR"/>
         <result property="adoptionState" column="adoption_state" jdbcType="TINYINT"/>
         <result property="adoptionAddress" column="adoption_address" jdbcType="VARCHAR"/>
@@ -45,16 +51,22 @@
         </collection>
     </resultMap>
 
+
     <sql id="Base_Column_List">
-        key_id,adoption_title,adoption_content,
+        key_id,animal_type,animal_age,
+        animal_breed,animal_sex,adoption_content,
         adoption_state,adoption_address,adoption_phone_number,
         foreign_key_publisher,delete_mark,create_by,
         create_date,update_by,update_date
     </sql>
 
+
     <select id="selectStrayAnimalsAdoptionPageVO" resultMap="StrayAnimalsAdoptionVO">
         SELECT SAA.key_id,
-        SAA.adoption_title,
+        SAA.animal_type,
+        SAA.animal_age,
+        SAA.animal_breed,
+        SAA.animal_sex,
         SAA.adoption_content,
         SAA.adoption_address,
         SAA.adoption_phone_number,
@@ -84,5 +96,34 @@
                 AND SAA.adoption_title like CONCAT('%',#{adoptionTitle},'%')
             </if>
         </where>
+    </select>
+
+    <select id="selectStrayAnimalsAdoptionInfoByKeyId" resultMap="StrayAnimalsAdoptionVO">
+        SELECT SAA.key_id,
+               SAA.animal_type,
+               SAA.animal_age,
+               SAA.animal_breed,
+               SAA.animal_sex,
+               SAA.adoption_content,
+               SAA.adoption_address,
+               SAA.adoption_phone_number,
+               SAA.adoption_state,
+               SAA.create_by,
+               SAA.create_date,
+               SAA.update_by,
+               SAA.update_date,
+
+               SAF.key_id      AS file_key_id,
+               SAF.file_name,
+               SAF.file_category,
+               SAF.file_path,
+               SAF.create_by   AS file_create_by,
+               SAF.create_date AS file_create_date,
+               SAF.update_by   AS file_update_by,
+               SAF.update_date AS file_update_date
+        FROM stray_animals_adoption SAA
+                 LEFT JOIN stray_animals_adoption_file SAAF ON SAA.key_id = SAAF.adoption_id AND SAAF.delete_mark = 1
+                 LEFT JOIN stray_animals_file SAF ON SAAF.file_id = SAF.key_id AND SAF.delete_mark = 1
+        WHERE SAA.key_id = #{keyId}
     </select>
 </mapper>

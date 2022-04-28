@@ -2,7 +2,6 @@ package cn.basicPLY.animals.service.impl;
 
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
@@ -12,17 +11,35 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
-* @author Administrator
-* @description 针对表【stray_animals_adoption(流浪动物救助网：领养信息表)】的数据库操作Service实现
-* @createDate 2022-04-24 21:36:24
-*/
+ * @author Administrator
+ * @description 针对表【stray_animals_adoption(流浪动物救助网：领养信息表)】的数据库操作Service实现
+ * @createDate 2022-04-28 22:09:52
+ */
 @Service
 public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdoptionMapper, StrayAnimalsAdoption>
-    implements StrayAnimalsAdoptionService{
-
+        implements StrayAnimalsAdoptionService {
+    /**
+     * 分页查询领养信息
+     *
+     * @param page          分页参数
+     * @param userId        用户ID
+     * @param adoptionTitle 模糊查询标题
+     * @return 返回数据列表
+     */
     @Override
     public List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page, String userId, String adoptionTitle) {
         return baseMapper.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
+    }
+
+    /**
+     * 根据领养KeyId查询领养详情
+     *
+     * @param keyId keyId
+     * @return 领养详情
+     */
+    @Override
+    public StrayAnimalsAdoptionVO selectStrayAnimalsAdoptionInfoByKeyId(String keyId) {
+        return baseMapper.selectStrayAnimalsAdoptionInfoByKeyId(keyId);
     }
 }
 

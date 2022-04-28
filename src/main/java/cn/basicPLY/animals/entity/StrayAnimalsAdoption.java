@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -12,9 +13,10 @@ import lombok.Data;
 
 /**
  * 流浪动物救助网：领养信息表
+ *
  * @TableName stray_animals_adoption
  */
-@TableName(value ="stray_animals_adoption")
+@TableName(value = "stray_animals_adoption")
 @Data
 public class StrayAnimalsAdoption implements Serializable {
     /**
@@ -24,9 +26,24 @@ public class StrayAnimalsAdoption implements Serializable {
     private String keyId;
 
     /**
-     * 领养标题
+     * 动物类型
      */
-    private String adoptionTitle;
+    private String animalType;
+
+    /**
+     * 动物年龄
+     */
+    private String animalAge;
+
+    /**
+     * 动物品种
+     */
+    private String animalBreed;
+
+    /**
+     * 动物性别(1 弟弟 2 妹妹)
+     */
+    private String animalSex;
 
     /**
      * 领养内容描述
@@ -66,7 +83,7 @@ public class StrayAnimalsAdoption implements Serializable {
     /**
      * 创建时间
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date createDate;
 
     /**
@@ -77,7 +94,7 @@ public class StrayAnimalsAdoption implements Serializable {
     /**
      * 更新人
      */
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss",timezone="GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date updateDate;
 
     @TableField(exist = false)
