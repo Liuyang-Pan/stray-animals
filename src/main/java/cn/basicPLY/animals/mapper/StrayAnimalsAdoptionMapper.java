@@ -5,6 +5,7 @@ import cn.basicPLY.animals.entity.VO.StrayAnimalsAdopterVO;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -44,8 +45,21 @@ public interface StrayAnimalsAdoptionMapper extends BaseMapper<StrayAnimalsAdopt
      * @return 领养人相关信息
      */
     List<StrayAnimalsAdopterVO> selectStrayAnimalsAdopterList(@Param("keyId") String keyId);
+
+    /**
+     * 查询我的领养与申请领养情况相关接口
+     *
+     * @param page 分页信息
+     * @return 领养信息
+     */
+    List<StrayAnimalsAdoptionVO> selectMyPostAdoption(IPage<StrayAnimalsAdoptionVO> page, @Param("userId") String userId);
+
+    /**
+     * 获取我申请的领养信息
+     *
+     * @param page   分页信息
+     * @param userId 用户ID
+     * @return 我的领养列表信息
+     */
+    List<StrayAnimalsAdoption> selectMyAdoptionList(Page<StrayAnimalsAdoption> page, @Param("userId") String userId);
 }
-
-
-
-

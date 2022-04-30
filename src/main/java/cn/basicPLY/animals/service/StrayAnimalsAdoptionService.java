@@ -3,6 +3,7 @@ package cn.basicPLY.animals.service;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -33,4 +34,22 @@ public interface StrayAnimalsAdoptionService extends IService<StrayAnimalsAdopti
      * @return 领养详情
      */
     StrayAnimalsAdoptionVO selectStrayAnimalsAdoptionInfoByKeyId(String keyId);
+
+    /**
+     * 获取我的发布领养信息
+     *
+     * @param page   分页
+     * @param userId 用户ID
+     * @return 领养信息
+     */
+    List<StrayAnimalsAdoptionVO> selectMyPostAdoption(IPage<StrayAnimalsAdoptionVO> page, String userId);
+
+    /**
+     * 获取我申请的领养信息
+     *
+     * @param page   分页信息
+     * @param userId 用户ID
+     * @return 我的领养列表信息
+     */
+    List<StrayAnimalsAdoption> selectMyAdoptionList(Page<StrayAnimalsAdoption> page, String userId);
 }

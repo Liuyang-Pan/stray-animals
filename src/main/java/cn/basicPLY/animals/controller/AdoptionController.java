@@ -21,7 +21,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +54,7 @@ public class AdoptionController {
     /**
      * 领养人信息相关Service
      */
+    @Autowired
     private StrayAnimalsAdopterService adopterService;
 
     /**
@@ -69,7 +69,7 @@ public class AdoptionController {
     public ResponseEntity<AjaxResult> publishAdoptionInfo(@RequestBody StrayAnimalsAdoptionDTO adoptionDTO) {
         log.info("开始执行发布领养信息接口");
         //判断是否登录用户
-        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) && StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
             return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.BAD_REQUEST);
         }
         int result = 0;
@@ -117,38 +117,39 @@ public class AdoptionController {
 
     @ApiOperation("获取领养详情")
     @GetMapping("/getAdoption/{keyId}")
-    public ResponseEntity<StrayAnimalsAdoptionVO> getAdoption(@PathVariable String keyId) {
+    public ResponseEntity<AjaxResult> getAdoption(@PathVariable String keyId) {
         log.info("开始执行获取领养详情接口");
         //主键为空返回错误请求
         if (StringUtils.isBlank(keyId)) {
-            new ResponseEntity<>("查询的keyId为null 请检查", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(AjaxResult.error("查询的keyId为null 请检查"), HttpStatus.OK);
         }
         StrayAnimalsAdoptionVO strayAnimalsAdoptionVO = adoptionService.selectStrayAnimalsAdoptionInfoByKeyId(keyId);
         //查询出的数据为null返回错误信息
         if (ObjectUtils.isEmpty(strayAnimalsAdoptionVO)) {
-            new ResponseEntity<>("暂无此数据 请检查keyId", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(AjaxResult.error("暂无此数据 请检查keyId"), HttpStatus.OK);
         }
         //返回领养详情数据
-        return new ResponseEntity<>(strayAnimalsAdoptionVO, HttpStatus.OK);
+        return new ResponseEntity<>(AjaxResult.success(strayAnimalsAdoptionVO), HttpStatus.OK);
     }
 
     @ApiOperation("申请领养")
-    @DeleteMapping("/applyForAdoption")
+    @PostMapping("/applyForAdoption")
     @Transactional(rollbackFor = Exception.class)
     public ResponseEntity<AjaxResult> applyForAdoption(@RequestBody StrayAnimalsAdopter strayAnimalsAdopter) {
         log.info("开始执行申请领养接口");
         //仅需要传入adoptionId
         //判断是否登录用户
-        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) && StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
-            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.BAD_REQUEST);
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
         }
         //判断是否已经申请
         QueryWrapper<StrayAnimalsAdopter> checkAdopter = new QueryWrapper<>();
         checkAdopter.eq("delete_mark", 1)
                 .eq("adopter_id", UserUtils.getUserDetails().getKeyId())
                 .eq("adoption_id", strayAnimalsAdopter.getAdoptionId());
-        if (adopterService.getBaseMapper().selectCount(checkAdopter) > 0) {
-            return new ResponseEntity<>(AjaxResult.error("您已申请过了"), HttpStatus.BAD_REQUEST);
+        Long aLong = adopterService.getBaseMapper().selectCount(checkAdopter);
+        if (ObjectUtils.isNotEmpty(aLong) && aLong > 0) {
+            return new ResponseEntity<>(AjaxResult.error("您已申请过了"), HttpStatus.OK);
         }
         //写入领养人信息
         strayAnimalsAdopter.setAdopterId(UserUtils.getUserDetails().getKeyId());
@@ -163,9 +164,9 @@ public class AdoptionController {
         strayAnimalsAdoption.setUpdateDate(new Date());
         int result = adoptionService.getBaseMapper().updateById(strayAnimalsAdoption);
         if (result > 0) {
-            return new ResponseEntity<>(AjaxResult.success("已被领养状态设置成功"), HttpStatus.OK);
+            return new ResponseEntity<>(AjaxResult.success("申请成功"), HttpStatus.OK);
         }
-        return new ResponseEntity<>(AjaxResult.error("已被领养状态设置失败"), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(AjaxResult.error("申请失败"), HttpStatus.OK);
     }
 
     @ApiOperation("同意申请")
@@ -188,5 +189,31 @@ public class AdoptionController {
             return new ResponseEntity<>(AjaxResult.success("已被领养状态设置成功"), HttpStatus.OK);
         }
         return new ResponseEntity<>(AjaxResult.error("已被领养状态设置失败"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ApiOperation("获取我的发布领养列表")
+    @GetMapping("myPostAdoption")
+    public ResponseEntity<AjaxResult> myPostAdoption(Page<StrayAnimalsAdoptionVO> page) {
+        log.info("开始执行获取我的发布领养列表接口");
+        //判断是否登录用户
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
+        }
+        //分页查询
+        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectMyPostAdoption(page, UserUtils.getUserDetails().getKeyId());
+        return new ResponseEntity<>(AjaxResult.success(page.setRecords(strayAnimalsAdoptionVOS)), HttpStatus.OK);
+    }
+
+    @ApiOperation("获取我的领养列表")
+    @GetMapping("myAdoptionList")
+    public ResponseEntity<AjaxResult> myAdoptionList(Page<StrayAnimalsAdoption> page) {
+        log.info("开始执行获取我的领养列表接口");
+        //判断是否登录用户
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
+        }
+        //分页查询
+        List<StrayAnimalsAdoption> selectMyAdoptionList = adoptionService.selectMyAdoptionList(page, UserUtils.getUserDetails().getKeyId());
+        return new ResponseEntity<>(AjaxResult.success(page.setRecords(selectMyAdoptionList)), HttpStatus.OK);
     }
 }

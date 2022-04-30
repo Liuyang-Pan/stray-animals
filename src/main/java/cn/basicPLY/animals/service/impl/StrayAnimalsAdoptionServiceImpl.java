@@ -7,6 +7,7 @@ import cn.basicPLY.animals.service.StrayAnimalsAdopterService;
 import cn.basicPLY.animals.utils.UserUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
@@ -59,7 +60,7 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
             strayAnimalsAdoptionVO.setStrayAnimalsAdopterVOS(baseMapper.selectStrayAnimalsAdopterList(keyId));
         }
         //是否显示电话信息等状态
-        boolean whetherToDisplayInformation = false;
+        boolean whetherToDisplayInformation = true;
         if (ObjectUtils.isNotEmpty(UserUtils.getUserDetails())
                 && StringUtils.isNotBlank(UserUtils.getUserDetails().getKeyId())) {
             QueryWrapper<StrayAnimalsAdopter> adopterQueryWrapper = new QueryWrapper<>();
@@ -68,13 +69,23 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
                     .eq("adopter_id", UserUtils.getUserDetails().getKeyId()) //领养人用户ID
                     .eq("adopter_state", 2); //可查看电话状态
             if (adopterService.getBaseMapper().selectCount(adopterQueryWrapper) > 0) {
-                whetherToDisplayInformation = true;
+                whetherToDisplayInformation = false;
             }
         }
         if (whetherToDisplayInformation) {
             strayAnimalsAdoptionVO.setAdoptionPhoneNumber(null);
         }
         return strayAnimalsAdoptionVO;
+    }
+
+    @Override
+    public List<StrayAnimalsAdoptionVO> selectMyPostAdoption(IPage<StrayAnimalsAdoptionVO> page, String userId) {
+        return baseMapper.selectMyPostAdoption(page, userId);
+    }
+
+    @Override
+    public List<StrayAnimalsAdoption> selectMyAdoptionList(Page<StrayAnimalsAdoption> page, String userId) {
+        return baseMapper.selectMyAdoptionList(page, userId);
     }
 }
 

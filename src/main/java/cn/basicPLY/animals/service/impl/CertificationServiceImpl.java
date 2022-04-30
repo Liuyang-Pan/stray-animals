@@ -9,8 +9,8 @@ import cn.basicPLY.animals.service.StrayAnimalsUserAuthorityService;
 import cn.basicPLY.animals.service.StrayAnimalsUserService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.ObjectUtils;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -121,14 +121,26 @@ public class CertificationServiceImpl implements CertificationService {
      */
     @Override
     public int modifyUser(StrayAnimalsUser strayAnimalsUser) {
-        //创建Spring Security加密对象
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        //通过Spring Security强Hash算法对密码进行加密
-        strayAnimalsUser.setPassword(encoder.encode(strayAnimalsUser.getPassword()));
+        //禁止更新密码
+        strayAnimalsUser.setPassword(null);
         //设置更新人
         strayAnimalsUser.setUpdateBy(UserEnum.USER_ADMIN.getName());
         //设置更新时间
         strayAnimalsUser.setUpdateDate(new Date());
         return userService.getBaseMapper().updateById(strayAnimalsUser);
+    }
+
+    @Override
+    public boolean modifyPassword(String keyId, String oldPassword, String newPassword) {
+        StrayAnimalsUser strayAnimalsUser = userService.getBaseMapper().selectById(keyId);
+        if (ObjectUtils.isNotEmpty(strayAnimalsUser) && StringUtils.isNotBlank(strayAnimalsUser.getPassword())) {
+            //创建Spring Security加密对象
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if (encoder.matches(oldPassword, strayAnimalsUser.getPassword())) {
+                strayAnimalsUser.setPassword(newPassword);
+                return userService.getBaseMapper().updateById(strayAnimalsUser) > 0;
+            }
+        }
+        return false;
     }
 }

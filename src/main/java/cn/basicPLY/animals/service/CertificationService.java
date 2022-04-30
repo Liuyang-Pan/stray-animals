@@ -35,4 +35,13 @@ public interface CertificationService {
      * @return 返回修改数据成功与否结果
      */
     int modifyUser(StrayAnimalsUser strayAnimalsUser);
+
+    /**
+     * 修改密码相关接口
+     *
+     * @param keyId       用户ID
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     */
+    boolean modifyPassword(String keyId, String oldPassword, String newPassword);
 }

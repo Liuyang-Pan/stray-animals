@@ -146,4 +146,96 @@
         WHERE SAA.delete_mark = 1
           AND SAA.adoption_id = #{keyId}
     </select>
+
+    <resultMap id="MyPostAdoptionVO" type="cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO">
+        <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
+        <result property="animalType" column="animal_type" jdbcType="VARCHAR"/>
+        <result property="animalAge" column="animal_age" jdbcType="VARCHAR"/>
+        <result property="animalBreed" column="animal_breed" jdbcType="VARCHAR"/>
+        <result property="animalSex" column="animal_sex" jdbcType="VARCHAR"/>
+        <result property="adoptionContent" column="adoption_content" jdbcType="VARCHAR"/>
+        <result property="adoptionState" column="adoption_state" jdbcType="TINYINT"/>
+        <result property="adoptionAddress" column="adoption_address" jdbcType="VARCHAR"/>
+        <result property="adoptionPhoneNumber" column="adoption_phone_number" jdbcType="VARCHAR"/>
+        <result property="foreignKeyPublisher" column="foreign_key_publisher" jdbcType="VARCHAR"/>
+        <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+        <collection property="strayAnimalsAdopterVOS" ofType="cn.basicPLY.animals.entity.VO.StrayAnimalsAdopterVO">
+            <id property="keyId" column="adopter_key_id" jdbcType="VARCHAR"/>
+
+            <result property="adoptionId" column="adopter_adoption_id" jdbcType="VARCHAR"/>
+            <result property="adopterId" column="adopter_id" jdbcType="VARCHAR"/>
+            <result property="adopterState" column="adopter_state" jdbcType="TINYINT"/>
+
+            <result property="nickName" column="adopter_nick_name" jdbcType="VARCHAR"/>
+            <result property="adopterPhoneNumber" column="adopter_phone_number" jdbcType="VARCHAR"/>
+            <result property="deleteMark" column="adopter_delete_mark" jdbcType="TINYINT"/>
+            <result property="createBy" column="adopter_create_by" jdbcType="VARCHAR"/>
+            <result property="createDate" column="file_create_date" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="adopter_update_by" jdbcType="VARCHAR"/>
+            <result property="updateDate" column="adopter_update_date" jdbcType="TIMESTAMP"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectMyPostAdoption" resultMap="MyPostAdoptionVO">
+        SELECT SAA.key_id,
+               SAA.animal_type,
+               SAA.animal_age,
+               SAA.animal_breed,
+               SAA.animal_sex,
+               SAA.adoption_content,
+               SAA.adoption_state,
+               SAA.adoption_address,
+               SAA.adoption_phone_number,
+               SAA.foreign_key_publisher,
+               SAA.delete_mark,
+               SAA.create_by,
+               SAA.create_date,
+               SAA.update_by,
+               SAA.update_date,
+
+               SAER.key_id        AS adopter_key_id,
+               SAER.adoption_id   AS adopter_adoption_id,
+               SAER.adopter_id    AS adopter_id,
+
+               SAER.adopter_state AS adopter_state,
+               SAER.delete_mark   AS adopter_delete_mark,
+               SAER.create_by     AS adopter_create_by,
+               SAER.create_date   AS adopter_create_date,
+               SAER.update_by     AS adopter_update_by,
+               SAER.update_date   AS adopter_update_date,
+
+               SAU.nick_name      AS adopter_nick_name,   -- 领养人名称
+               SAU.phone_number   AS adopter_phone_number -- 领养人电话
+        FROM stray_animals_adoption SAA
+                 LEFT JOIN stray_animals_adopter SAER ON SAA.key_id = SAER.adoption_id AND SAER.delete_mark = 1
+                 LEFT JOIN stray_animals_user SAU ON SAER.adopter_id = SAU.key_id
+        WHERE SAA.delete_mark = 1
+          AND SAA.foreign_key_publisher = #{userId}
+    </select>
+
+    <select id="selectMyAdoptionList" resultMap="BaseResultMap">
+        SELECT SAA.key_id,
+               SAA.animal_type,
+               SAA.animal_age,
+               SAA.animal_breed,
+               SAA.animal_sex,
+               SAA.adoption_content,
+               SAA.adoption_state,
+               SAA.adoption_address,
+               IF(SAER.adopter_state = 2, SAA.adoption_phone_number, NULL) AS adoption_phone_number,
+               SAA.foreign_key_publisher,
+               SAA.delete_mark,
+               SAA.create_by,
+               SAA.create_date,
+               SAA.update_by,
+               SAA.update_date
+        FROM stray_animals_adoption SAA
+                 LEFT JOIN stray_animals_adopter SAER ON SAA.key_id = SAER.adoption_id AND SAER.delete_mark = 1
+                 LEFT JOIN stray_animals_user SAU ON SAER.adopter_id = SAU.key_id
+        WHERE SAER.adopter_id = #{userId}
+    </select>
 </mapper>
