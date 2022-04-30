@@ -27,4 +27,10 @@ public class StrayAnimalsAdoptionVO extends StrayAnimalsAdoption implements Seri
      */
     @ApiModelProperty("领养关联文件列表")
     private List<StrayAnimalsFile> strayAnimalsFiles;
+
+    /**
+     * 领养人关联相关信息
+     */
+    @ApiModelProperty("领养人关联相关信息")
+    private List<StrayAnimalsAdopterVO> strayAnimalsAdopterVOS;
 }

@@ -92,7 +92,7 @@
             <if test="userId != null and userId != ''">
                 AND SAA.foreign_key_publisher = #{userId}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="adoptionTitle != null and adoptionTitle != ''">
                 AND SAA.adoption_title like CONCAT('%',#{adoptionTitle},'%')
             </if>
         </where>
@@ -125,5 +125,25 @@
                  LEFT JOIN stray_animals_adoption_file SAAF ON SAA.key_id = SAAF.adoption_id AND SAAF.delete_mark = 1
                  LEFT JOIN stray_animals_file SAF ON SAAF.file_id = SAF.key_id AND SAF.delete_mark = 1
         WHERE SAA.key_id = #{keyId}
+    </select>
+
+    <select id="selectStrayAnimalsAdopterList"
+            resultType="cn.basicPLY.animals.entity.VO.StrayAnimalsAdopterVO">
+        SELECT SAA.key_id        AS keyId,
+               SAA.adoption_id   AS adoptionId,
+               SAA.adopter_id    AS adopterId,
+               SAA.adopter_state AS adopterState,
+               SAA.delete_mark   AS deleteMark,
+               SAA.create_by     AS createBy,
+               SAA.create_date   AS createDate,
+               SAA.update_by     AS updateBy,
+               SAA.update_date   AS updateDate,
+
+               SAU.nick_name     AS nickName,          -- 领养人名称
+               SAU.phone_number  AS adopterPhoneNumber -- 领养人电话
+        FROM stray_animals_adopter SAA
+                 LEFT JOIN stray_animals_user SAU on SAU.key_id = SAA.adopter_id
+        WHERE SAA.delete_mark = 1
+          AND SAA.adoption_id = #{keyId}
     </select>
 </mapper>

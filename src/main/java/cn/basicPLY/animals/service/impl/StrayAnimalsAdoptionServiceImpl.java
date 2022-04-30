@@ -1,11 +1,19 @@
 package cn.basicPLY.animals.service.impl;
 
+import cn.basicPLY.animals.entity.StrayAnimalsAdopter;
+import cn.basicPLY.animals.entity.VO.StrayAnimalsAdopterVO;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
+import cn.basicPLY.animals.service.StrayAnimalsAdopterService;
+import cn.basicPLY.animals.utils.UserUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
 import cn.basicPLY.animals.mapper.StrayAnimalsAdoptionMapper;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +26,10 @@ import java.util.List;
 @Service
 public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdoptionMapper, StrayAnimalsAdoption>
         implements StrayAnimalsAdoptionService {
+
+    @Autowired
+    private StrayAnimalsAdopterService adopterService;
+
     /**
      * 分页查询领养信息
      *
@@ -39,7 +51,30 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
      */
     @Override
     public StrayAnimalsAdoptionVO selectStrayAnimalsAdoptionInfoByKeyId(String keyId) {
-        return baseMapper.selectStrayAnimalsAdoptionInfoByKeyId(keyId);
+        StrayAnimalsAdoptionVO strayAnimalsAdoptionVO = baseMapper.selectStrayAnimalsAdoptionInfoByKeyId(keyId);
+        //当前登录用户于发布领养信息用户相等时 获取领养人相关信息
+        if (ObjectUtils.isNotEmpty(UserUtils.getUserDetails())
+                && StringUtils.isNotBlank(UserUtils.getUserDetails().getKeyId())
+                && UserUtils.getUserDetails().getKeyId().equals(strayAnimalsAdoptionVO.getForeignKeyPublisher())) {
+            strayAnimalsAdoptionVO.setStrayAnimalsAdopterVOS(baseMapper.selectStrayAnimalsAdopterList(keyId));
+        }
+        //是否显示电话信息等状态
+        boolean whetherToDisplayInformation = false;
+        if (ObjectUtils.isNotEmpty(UserUtils.getUserDetails())
+                && StringUtils.isNotBlank(UserUtils.getUserDetails().getKeyId())) {
+            QueryWrapper<StrayAnimalsAdopter> adopterQueryWrapper = new QueryWrapper<>();
+            adopterQueryWrapper.eq("delete_mark", 1) //是否删除标识
+                    .eq("adoption_id", keyId) //领养信息关联ID
+                    .eq("adopter_id", UserUtils.getUserDetails().getKeyId()) //领养人用户ID
+                    .eq("adopter_state", 2); //可查看电话状态
+            if (adopterService.getBaseMapper().selectCount(adopterQueryWrapper) > 0) {
+                whetherToDisplayInformation = true;
+            }
+        }
+        if (whetherToDisplayInformation) {
+            strayAnimalsAdoptionVO.setAdoptionPhoneNumber(null);
+        }
+        return strayAnimalsAdoptionVO;
     }
 }
 

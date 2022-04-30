@@ -1,12 +1,15 @@
 package cn.basicPLY.animals.controller;
 
 import cn.basicPLY.animals.entity.DTO.StrayAnimalsAdoptionDTO;
+import cn.basicPLY.animals.entity.StrayAnimalsAdopter;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
+import cn.basicPLY.animals.service.StrayAnimalsAdopterService;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionFileService;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import cn.basicPLY.animals.utils.UserUtils;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -22,6 +25,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -49,6 +53,11 @@ public class AdoptionController {
     private StrayAnimalsAdoptionFileService adoptionFileService;
 
     /**
+     * 领养人信息相关Service
+     */
+    private StrayAnimalsAdopterService adopterService;
+
+    /**
      * 发布领养信息接口
      *
      * @param adoptionDTO 领养信息
@@ -58,6 +67,8 @@ public class AdoptionController {
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/publish")
     public ResponseEntity<AjaxResult> publishAdoptionInfo(@RequestBody StrayAnimalsAdoptionDTO adoptionDTO) {
+        log.info("开始执行发布领养信息接口");
+        //判断是否登录用户
         if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) && StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
             return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.BAD_REQUEST);
         }
@@ -96,17 +107,18 @@ public class AdoptionController {
     public ResponseEntity<IPage<StrayAnimalsAdoptionVO>> getAdoptionList(Page<StrayAnimalsAdoptionVO> page,
                                                                          @RequestParam(required = false) String userId,
                                                                          @RequestParam(required = false) String adoptionTitle) {
+        log.info("开始执行获取领养列表接口");
         //分页查询
-        if (ObjectUtils.isNotEmpty(UserUtils.getUserDetails())) {
-            log.info("User:{}", UserUtils.getUserDetails());
-        }
         List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
+        //使电话显示为NULL
+        strayAnimalsAdoptionVOS.forEach(adoption -> adoption.setAdoptionPhoneNumber(null));
         return new ResponseEntity<>(page.setRecords(strayAnimalsAdoptionVOS), HttpStatus.OK);
     }
 
     @ApiOperation("获取领养详情")
     @GetMapping("/getAdoption/{keyId}")
     public ResponseEntity<StrayAnimalsAdoptionVO> getAdoption(@PathVariable String keyId) {
+        log.info("开始执行获取领养详情接口");
         //主键为空返回错误请求
         if (StringUtils.isBlank(keyId)) {
             new ResponseEntity<>("查询的keyId为null 请检查", HttpStatus.BAD_REQUEST);
@@ -118,5 +130,63 @@ public class AdoptionController {
         }
         //返回领养详情数据
         return new ResponseEntity<>(strayAnimalsAdoptionVO, HttpStatus.OK);
+    }
+
+    @ApiOperation("申请领养")
+    @DeleteMapping("/applyForAdoption")
+    @Transactional(rollbackFor = Exception.class)
+    public ResponseEntity<AjaxResult> applyForAdoption(@RequestBody StrayAnimalsAdopter strayAnimalsAdopter) {
+        log.info("开始执行申请领养接口");
+        //仅需要传入adoptionId
+        //判断是否登录用户
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) && StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.BAD_REQUEST);
+        }
+        //判断是否已经申请
+        QueryWrapper<StrayAnimalsAdopter> checkAdopter = new QueryWrapper<>();
+        checkAdopter.eq("delete_mark", 1)
+                .eq("adopter_id", UserUtils.getUserDetails().getKeyId())
+                .eq("adoption_id", strayAnimalsAdopter.getAdoptionId());
+        if (adopterService.getBaseMapper().selectCount(checkAdopter) > 0) {
+            return new ResponseEntity<>(AjaxResult.error("您已申请过了"), HttpStatus.BAD_REQUEST);
+        }
+        //写入领养人信息
+        strayAnimalsAdopter.setAdopterId(UserUtils.getUserDetails().getKeyId());
+        strayAnimalsAdopter.setCreateBy(UserUtils.getUserDetails().getNickName());
+        strayAnimalsAdopter.setCreateDate(new Date());
+        adopterService.getBaseMapper().insert(strayAnimalsAdopter);
+        //更新领养信息表领养状态
+        StrayAnimalsAdoption strayAnimalsAdoption = new StrayAnimalsAdoption();
+        strayAnimalsAdoption.setKeyId(strayAnimalsAdopter.getAdoptionId());
+        strayAnimalsAdoption.setAdoptionState(2);
+        strayAnimalsAdoption.setUpdateBy(UserUtils.getUserDetails().getNickName());
+        strayAnimalsAdoption.setUpdateDate(new Date());
+        int result = adoptionService.getBaseMapper().updateById(strayAnimalsAdoption);
+        if (result > 0) {
+            return new ResponseEntity<>(AjaxResult.success("已被领养状态设置成功"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(AjaxResult.error("已被领养状态设置失败"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ApiOperation("同意申请")
+    @PutMapping("/agreeToApply")
+    public ResponseEntity<AjaxResult> agreeToApply(@RequestBody StrayAnimalsAdopter strayAnimalsAdopter) {
+        log.info("开始执行同意申请接口");
+        int result = adopterService.getBaseMapper().updateById(strayAnimalsAdopter);
+        if (result > 0) {
+            return new ResponseEntity<>(AjaxResult.success("同意申请成功"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(AjaxResult.error("同意失败"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ApiOperation("已被领养")
+    @PutMapping("/adopted")
+    public ResponseEntity<AjaxResult> adopted(@RequestBody StrayAnimalsAdoption animalsAdoption) {
+        log.info("开始执行已被领养接口");
+        int result = adoptionService.getBaseMapper().updateById(animalsAdoption);
+        if (result > 0) {
+            return new ResponseEntity<>(AjaxResult.success("已被领养状态设置成功"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(AjaxResult.error("已被领养状态设置失败"), HttpStatus.BAD_REQUEST);
     }
 }
