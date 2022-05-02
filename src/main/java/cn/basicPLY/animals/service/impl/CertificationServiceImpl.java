@@ -130,6 +130,13 @@ public class CertificationServiceImpl implements CertificationService {
         return userService.getBaseMapper().updateById(strayAnimalsUser);
     }
 
+    /**
+     * 修改密码相关接口
+     *
+     * @param keyId       用户ID
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     */
     @Override
     public boolean modifyPassword(String keyId, String oldPassword, String newPassword) {
         StrayAnimalsUser strayAnimalsUser = userService.getBaseMapper().selectById(keyId);

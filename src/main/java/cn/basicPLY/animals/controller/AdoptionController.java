@@ -3,10 +3,12 @@ package cn.basicPLY.animals.controller;
 import cn.basicPLY.animals.entity.DTO.StrayAnimalsAdoptionDTO;
 import cn.basicPLY.animals.entity.StrayAnimalsAdopter;
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
+import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import cn.basicPLY.animals.service.StrayAnimalsAdopterService;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionFileService;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
+import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import cn.basicPLY.animals.utils.UserUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -58,6 +60,12 @@ public class AdoptionController {
     private StrayAnimalsAdopterService adopterService;
 
     /**
+     * 救助站/基地Service
+     */
+    @Autowired
+    private StrayAnimalsAidStationService aidStationService;
+
+    /**
      * 发布领养信息接口
      *
      * @param adoptionDTO 领养信息
@@ -79,6 +87,15 @@ public class AdoptionController {
         BeanUtils.copyProperties(adoptionDTO, strayAnimalsAdoption);
         //设置发布人的ID
         strayAnimalsAdoption.setForeignKeyPublisher(UserUtils.getUserDetails().getKeyId());
+        //判断是否是救助站
+        QueryWrapper<StrayAnimalsAidStation> checkAidStation = new QueryWrapper<>();
+        checkAidStation.eq("delete_mark", 1)
+                .eq("user_id", UserUtils.getUserDetails().getKeyId());
+        Long aLong = aidStationService.getBaseMapper().selectCount(checkAidStation);
+        if (ObjectUtils.isNotEmpty(aLong) && aLong > 0) {
+            //设置为救助站站发布信息 查询时显示靠前
+            strayAnimalsAdoption.setAidStationMark(1);
+        }
         strayAnimalsAdoption.setCreateBy(null != UserUtils.getUserDetails().getNickName() ? UserUtils.getUserDetails().getNickName() : "");
         //写入领养信息
         result += adoptionService.getBaseMapper().insert(strayAnimalsAdoption);

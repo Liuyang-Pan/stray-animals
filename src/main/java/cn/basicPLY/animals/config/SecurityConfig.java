@@ -66,7 +66,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
@@ -74,9 +73,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*/user/**").hasRole("user")
                 .antMatchers("/certification/**", "/file/**", "/swagger-ui/**",
                         "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**", "/v3/**",
-                        "/adoption/**"
+                        "/adoption/**", "/aidStation/**"
                 )
-                .permitAll() //permitAll() /certification/**所以请求均可访问
+                .permitAll() //permitAll() 所以角色均可访问
                 .anyRequest().authenticated() //authenticated()需要认证访问
                 .and()
                 .formLogin()

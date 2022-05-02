@@ -9,62 +9,62 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 流浪动物救助网：领养信息表
- * @TableName stray_animals_adoption
+ * 流浪动物救助网：资源需求相关信息表
+ * @TableName stray_animals_resource
  */
-@TableName(value ="stray_animals_adoption")
+@TableName(value ="stray_animals_resource")
 @Data
-public class StrayAnimalsAdoption implements Serializable {
+public class StrayAnimalsResource implements Serializable {
     /**
-     * 主键
+     * 主键ID
      */
     @TableId
     private String keyId;
 
     /**
-     * 动物类型
-     */
-    private String animalType;
-
-    /**
-     * 动物年龄
-     */
-    private String animalAge;
-
-    /**
-     * 动物品种
-     */
-    private String animalBreed;
-
-    /**
-     * 动物性别(弟弟/妹妹)
-     */
-    private String animalSex;
-
-    /**
-     * 领养内容描述
-     */
-    private String adoptionContent;
-
-    /**
-     * 领养状态：1、待领养；2、有申请；3、已领养
-     */
-    private Integer adoptionState;
-
-    /**
-     * 领养地点
-     */
-    private String adoptionAddress;
-
-    /**
-     * 领养电话
-     */
-    private String adoptionPhoneNumber;
-
-    /**
      * 发布人（关联用户表ID）
      */
     private String foreignKeyPublisher;
+
+    /**
+     * 资源类型(需求/供应)
+     */
+    private String resourceType;
+
+    /**
+     * 需求供应类型(资金/物资/场地/其他)
+     */
+    private String demandSupplyType;
+
+    /**
+     * 需求供应主体(企业/个人)
+     */
+    private String demandSupplyBody;
+
+    /**
+     * 需求供应主体机构名称
+     */
+    private String demandSupplyOrganization;
+
+    /**
+     * 联系电话
+     */
+    private String contactNumber;
+
+    /**
+     * 资源标题
+     */
+    private String resourceTitle;
+
+    /**
+     * 资源地址
+     */
+    private String resourceAddress;
+
+    /**
+     * 资源内容描述
+     */
+    private String resourceContent;
 
     /**
      * 是否救助站发布(1 救助站发布 2 普通用户发布)

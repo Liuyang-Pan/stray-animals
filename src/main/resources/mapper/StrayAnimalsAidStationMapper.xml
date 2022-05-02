@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.basicPLY.animals.mapper.StrayAnimalsAidStationMapper">
+
+    <resultMap id="BaseResultMap" type="cn.basicPLY.animals.entity.StrayAnimalsAidStation">
+            <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+            <result property="stationName" column="station_name" jdbcType="VARCHAR"/>
+            <result property="stationType" column="station_type" jdbcType="VARCHAR"/>
+            <result property="creditCode" column="credit_code" jdbcType="VARCHAR"/>
+            <result property="principalName" column="principal_name" jdbcType="VARCHAR"/>
+            <result property="principalIdCode" column="principal_id_code" jdbcType="VARCHAR"/>
+            <result property="contactNumber" column="contact_number" jdbcType="VARCHAR"/>
+            <result property="stationAddress" column="station_address" jdbcType="VARCHAR"/>
+            <result property="stationLogo" column="station_logo" jdbcType="VARCHAR"/>
+            <result property="stationBusinessLicense" column="station_business_license" jdbcType="VARCHAR"/>
+            <result property="principalIdPortrait" column="principal_id_portrait" jdbcType="VARCHAR"/>
+            <result property="principalIdNationalEmblem" column="principal_id_national_emblem" jdbcType="VARCHAR"/>
+            <result property="certificationStatus" column="certification_status" jdbcType="TINYINT"/>
+            <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        key_id,user_id,station_name,
+        station_type,credit_code,principal_name,
+        principal_id_code,contact_number,station_address,
+        station_logo,station_business_license,principal_id_portrait,
+        principal_id_national_emblem,certification_status,delete_mark,
+        create_by,create_date,update_by,
+        update_date
+    </sql>
+</mapper>

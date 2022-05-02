@@ -15,6 +15,7 @@
         <result property="adoptionAddress" column="adoption_address" jdbcType="VARCHAR"/>
         <result property="adoptionPhoneNumber" column="adoption_phone_number" jdbcType="VARCHAR"/>
         <result property="foreignKeyPublisher" column="foreign_key_publisher" jdbcType="VARCHAR"/>
+        <result property="aidStationMark" column="aid_station_mark" jdbcType="TINYINT"/>
         <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
         <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
         <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
@@ -71,6 +72,7 @@
         SAA.adoption_address,
         SAA.adoption_phone_number,
         SAA.adoption_state,
+        SAA.aid_station_mark,
         SAA.create_by,
         SAA.create_date,
         SAA.update_by,
@@ -96,6 +98,7 @@
                 AND SAA.adoption_title like CONCAT('%',#{adoptionTitle},'%')
             </if>
         </where>
+        ORDER BY SAA.aid_station_mark DESC,SAA.create_date DESC
     </select>
 
     <select id="selectStrayAnimalsAdoptionInfoByKeyId" resultMap="StrayAnimalsAdoptionVO">

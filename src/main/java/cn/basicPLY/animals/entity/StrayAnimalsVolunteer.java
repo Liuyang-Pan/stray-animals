@@ -9,67 +9,77 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 流浪动物救助网：领养信息表
- * @TableName stray_animals_adoption
+ * 流浪动物救助网：志愿者信息
+ * @TableName stray_animals_volunteer
  */
-@TableName(value ="stray_animals_adoption")
+@TableName(value ="stray_animals_volunteer")
 @Data
-public class StrayAnimalsAdoption implements Serializable {
+public class StrayAnimalsVolunteer implements Serializable {
     /**
-     * 主键
+     * 主键ID
      */
     @TableId
     private String keyId;
 
     /**
-     * 动物类型
+     * 关联用户ID
      */
-    private String animalType;
+    private String userId;
 
     /**
-     * 动物年龄
+     * 志愿者姓名
      */
-    private String animalAge;
+    private String volunteerName;
 
     /**
-     * 动物品种
+     * 籍贯
      */
-    private String animalBreed;
+    private String hometown;
 
     /**
-     * 动物性别(弟弟/妹妹)
+     * 联系电话
      */
-    private String animalSex;
+    private String contactNumber;
 
     /**
-     * 领养内容描述
+     * 身份证号码
      */
-    private String adoptionContent;
+    private String volunteerIdCode;
 
     /**
-     * 领养状态：1、待领养；2、有申请；3、已领养
+     * 志愿者城市
      */
-    private Integer adoptionState;
+    private String volunteerCity;
 
     /**
-     * 领养地点
+     * 开始时间
      */
-    private String adoptionAddress;
+    private Date startDate;
 
     /**
-     * 领养电话
+     * 结束时间
      */
-    private String adoptionPhoneNumber;
+    private Date stopDate;
 
     /**
-     * 发布人（关联用户表ID）
+     * 学历/教育经历
      */
-    private String foreignKeyPublisher;
+    private String education;
 
     /**
-     * 是否救助站发布(1 救助站发布 2 普通用户发布)
+     * 性别
      */
-    private Integer aidStationMark;
+    private String sex;
+
+    /**
+     * 个人简介
+     */
+    private String personalProfile;
+
+    /**
+     * 期望工作
+     */
+    private String expectedJob;
 
     /**
      * 是否删除（1：未删除；0：已删除）
