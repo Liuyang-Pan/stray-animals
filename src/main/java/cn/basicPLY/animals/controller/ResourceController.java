@@ -3,7 +3,6 @@ package cn.basicPLY.animals.controller;
 import cn.basicPLY.animals.entity.DTO.StrayAnimalsResourceDTO;
 import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
 import cn.basicPLY.animals.entity.StrayAnimalsResource;
-import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO;
 import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
 import cn.basicPLY.animals.service.StrayAnimalsResourceFileService;
