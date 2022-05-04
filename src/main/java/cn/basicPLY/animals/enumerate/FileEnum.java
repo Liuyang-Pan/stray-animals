@@ -15,7 +15,23 @@ public enum FileEnum {
     /**
      * Banner图
      */
-    STRAY_ANIMALS_BANNER("首页横幅轮播图", "STRAY_ANIMALS_BANNER", "banner");
+    STRAY_ANIMALS_BANNER("首页横幅轮播图", "STRAY_ANIMALS_BANNER", "banner"),
+
+    /**
+     * 基地认证相关图片
+     */
+    STRAY_ANIMALS_AID_STATION("基地认证相关图片", "STRAY_ANIMALS_AID_STATION", "station"),
+
+    /**
+     * 需求
+     */
+    STRAY_ANIMALS_DEMAND("资源需求", "STRAY_ANIMALS_DEMAND", "demand"),
+
+    /**
+     * 供应
+     */
+    STRAY_ANIMALS_SUPPLY("资源供应", "STRAY_ANIMALS_SUPPLY", "supply");
+
     /**
      * 类型名称
      */

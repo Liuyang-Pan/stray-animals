@@ -23,6 +23,14 @@ public interface StrayAnimalsResourceMapper extends BaseMapper<StrayAnimalsResou
      * @return 需求/供应信息列表
      */
     List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, @Param("resourceType") String resourceType);
+
+    /**
+     * 根据KeyId查询资源信息详情
+     *
+     * @param keyId KeyId
+     * @return 资源信息详情
+     */
+    StrayAnimalsResourceVO selectResourcesByKeyId(@Param("keyId") String keyId);
 }
 
 

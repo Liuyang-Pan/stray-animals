@@ -3,6 +3,7 @@ package cn.basicPLY.animals.config;
 import cn.basicPLY.animals.entity.VO.CertificationUserDetails;
 import cn.basicPLY.animals.service.impl.StrayAnimalsUserDetailsServiceImpl;
 import cn.basicPLY.animals.utils.AjaxResult;
+import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import springfox.documentation.spring.web.json.Json;
 
 import java.io.PrintWriter;
 
@@ -73,7 +75,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/*/user/**").hasRole("user")
                 .antMatchers("/certification/**", "/file/**", "/swagger-ui/**",
                         "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**", "/v3/**",
-                        "/adoption/**", "/aidStation/**"
+                        "/adoption/**", "/aidStation/**", "/volunteer/**", "/aidStation/**", "/resource/**"
                 )
                 .permitAll() //permitAll() 所以角色均可访问
                 .anyRequest().authenticated() //authenticated()需要认证访问
@@ -118,7 +120,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessHandler((request, response, authentication) -> {
                     response.setContentType("application/json;charset=utf-8");
                     PrintWriter out = response.getWriter();
-                    out.write("注销成功");
+                    out.write(JSONUtil.toJsonStr(AjaxResult.success("注销成功")));
                     out.flush();
                     out.close();
                 })
@@ -130,7 +132,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json;charset=utf-8");
                     PrintWriter out = response.getWriter();
-                    out.write("尚未登录，请先登录");
+                    out.write(JSONUtil.toJsonStr(AjaxResult.error("尚未登录，请登录")));
                     out.flush();
                     out.close();
                 });

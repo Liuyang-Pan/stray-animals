@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -82,6 +83,7 @@ public class ResourceController {
         }
         //设置创建人
         strayAnimalsResource.setCreateBy(UserUtils.getUserDetails().getNickName());
+        strayAnimalsResource.setCreateDate(new Date());
         //写入发布资源/需求信息
         result += resourceService.getBaseMapper().insert(strayAnimalsResource);
 
@@ -110,5 +112,15 @@ public class ResourceController {
         }
         List<StrayAnimalsResourceVO> strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType);
         return new ResponseEntity<>(AjaxResult.success(page.setRecords(strayAnimalsResourceVOList)), HttpStatus.OK);
+    }
+
+    @ApiOperation("获取资源/需求信息详情")
+    @GetMapping("getResourcesByKeyId/{keyId}")
+    public ResponseEntity<AjaxResult> getResourcesByKeyId(@PathVariable String keyId) {
+        StrayAnimalsResourceVO strayAnimalsResourceVO = resourceService.selectResourcesByKeyId(keyId);
+        if (ObjectUtils.isEmpty(strayAnimalsResourceVO)) {
+            return new ResponseEntity<>(AjaxResult.error("暂无此数据 请检查KeyId"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(AjaxResult.success(strayAnimalsResourceVO), HttpStatus.OK);
     }
 }

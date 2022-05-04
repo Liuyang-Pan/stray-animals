@@ -144,7 +144,7 @@ public class CertificationServiceImpl implements CertificationService {
             //创建Spring Security加密对象
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             if (encoder.matches(oldPassword, strayAnimalsUser.getPassword())) {
-                strayAnimalsUser.setPassword(newPassword);
+                strayAnimalsUser.setPassword(encoder.encode(newPassword));
                 return userService.getBaseMapper().updateById(strayAnimalsUser) > 0;
             }
         }

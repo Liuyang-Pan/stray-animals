@@ -21,4 +21,12 @@ public interface StrayAnimalsResourceService extends IService<StrayAnimalsResour
      * @return 需求/供应信息列表
      */
     List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType);
+
+    /**
+     * 根据KeyId查询资源信息详情
+     *
+     * @param keyId KeyId
+     * @return 资源信息详情
+     */
+    StrayAnimalsResourceVO selectResourcesByKeyId(String keyId);
 }

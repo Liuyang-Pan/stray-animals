@@ -61,15 +61,16 @@ public class CertificationController {
     @PutMapping("/modify")
     public ResponseEntity<AjaxResult> modifyUser(@RequestBody StrayAnimalsUser strayAnimalsUser) {
         log.info("开始执行修改用户接口");
-        ResponseEntity<AjaxResult> resultResponseEntity = certificationService.checkParameters(strayAnimalsUser);
-        if (ObjectUtils.isEmpty(resultResponseEntity)) {
-            int result = certificationService.modifyUser(strayAnimalsUser);
-            if (result > 0) {
-                return new ResponseEntity<>(AjaxResult.success("修改成功"), HttpStatus.OK);
-            }
-            return new ResponseEntity<>(AjaxResult.error("修改失败"), HttpStatus.BAD_REQUEST);
+        //判断是否登录用户
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
         }
-        return resultResponseEntity;
+        strayAnimalsUser.setKeyId(UserUtils.getUserDetails().getKeyId());
+        int result = certificationService.modifyUser(strayAnimalsUser);
+        if (result > 0) {
+            return new ResponseEntity<>(AjaxResult.success("修改成功"), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(AjaxResult.error("修改失败"), HttpStatus.OK);
     }
 
     /**

@@ -29,6 +29,17 @@ public class StrayAnimalsResourceServiceImpl extends ServiceImpl<StrayAnimalsRes
     public List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType) {
         return baseMapper.selectResourcePage(page, resourceType);
     }
+
+    /**
+     * 根据KeyId查询资源信息详情
+     *
+     * @param keyId KeyId
+     * @return 资源信息详情
+     */
+    @Override
+    public StrayAnimalsResourceVO selectResourcesByKeyId(String keyId) {
+        return baseMapper.selectResourcesByKeyId(keyId);
+    }
 }
 
 
