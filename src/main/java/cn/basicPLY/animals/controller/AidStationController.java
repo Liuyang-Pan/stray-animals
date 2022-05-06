@@ -1,10 +1,12 @@
 package cn.basicPLY.animals.controller;
 
 import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
+import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import cn.basicPLY.animals.utils.UserUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -62,5 +61,22 @@ public class AidStationController {
             return new ResponseEntity<>(AjaxResult.success("申请认证成功"), HttpStatus.OK);
         }
         return new ResponseEntity<>(AjaxResult.error("申请认证失败"), HttpStatus.OK);
+    }
+
+    @ApiOperation("获取救助站/基地列表接口")
+    @GetMapping("/getAidStationList")
+    public ResponseEntity<AjaxResult> getAidStationList(Page<StrayAnimalsAidStation> page, String stationName) {
+        QueryWrapper<StrayAnimalsAidStation> aidStationQueryWrapper = new QueryWrapper<>();
+        if (StringUtils.isNotBlank(stationName)) {
+            aidStationQueryWrapper.like("station_name", stationName);
+        }
+        Page<StrayAnimalsAidStation> strayAnimalsAidStationPage = aidStationService.getBaseMapper().selectPage(page, aidStationQueryWrapper);
+        return new ResponseEntity<>(AjaxResult.success("获取数据成功", strayAnimalsAidStationPage), HttpStatus.OK);
+    }
+
+    @ApiOperation("获取救助站/基地详情接口")
+    @GetMapping("/getAidStationInfo/{keyId}")
+    public ResponseEntity<AjaxResult> getAidStationList(@PathVariable String keyId) {
+        return new ResponseEntity<>(AjaxResult.success("获取数据成功", aidStationService.getBaseMapper().selectById(keyId)), HttpStatus.OK);
     }
 }
