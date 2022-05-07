@@ -23,7 +23,7 @@ public interface StrayAnimalsAdoptionService extends IService<StrayAnimalsAdopti
      * @param adoptionTitle 模糊查询标题
      * @return 返回数据列表
      */
-    List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page,
+    List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page,
                                                                   String userId,
                                                                   String adoptionTitle);
 

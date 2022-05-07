@@ -1,6 +1,7 @@
 package cn.basicPLY.animals.mapper;
 
 import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
+import cn.basicPLY.animals.entity.StrayAnimalsFile;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdopterVO;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -26,9 +27,11 @@ public interface StrayAnimalsAdoptionMapper extends BaseMapper<StrayAnimalsAdopt
      * @param adoptionTitle 模糊查询标题
      * @return 返回数据列表
      */
-    List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page,
+    List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page,
                                                                   String userId,
                                                                   String adoptionTitle);
+
+    List<StrayAnimalsFile> selectAdoptionFileList(String adoptionId);
 
     /**
      * 根据领养KeyId查询领养详情

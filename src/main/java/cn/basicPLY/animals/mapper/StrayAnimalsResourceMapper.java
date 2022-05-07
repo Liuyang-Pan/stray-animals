@@ -1,5 +1,6 @@
 package cn.basicPLY.animals.mapper;
 
+import cn.basicPLY.animals.entity.StrayAnimalsFile;
 import cn.basicPLY.animals.entity.StrayAnimalsResource;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -23,6 +24,8 @@ public interface StrayAnimalsResourceMapper extends BaseMapper<StrayAnimalsResou
      * @return 需求/供应信息列表
      */
     List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, @Param("resourceType") String resourceType);
+
+    List<StrayAnimalsFile> selectResourceFileList(String resourceId);
 
     /**
      * 根据KeyId查询资源信息详情

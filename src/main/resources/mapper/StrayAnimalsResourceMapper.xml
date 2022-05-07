@@ -32,7 +32,7 @@
         update_date
     </sql>
 
-    <resultMap id="ResourcePage" type="cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO">
+    <resultMap id="ResourceVO" type="cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO">
         <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
         <result property="foreignKeyPublisher" column="foreign_key_publisher" jdbcType="VARCHAR"/>
         <result property="resourceType" column="resource_type" jdbcType="VARCHAR"/>
@@ -62,6 +62,37 @@
         </collection>
     </resultMap>
 
+    <resultMap id="ResourcePage" type="cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO">
+        <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
+        <result property="foreignKeyPublisher" column="foreign_key_publisher" jdbcType="VARCHAR"/>
+        <result property="resourceType" column="resource_type" jdbcType="VARCHAR"/>
+        <result property="demandSupplyType" column="demand_supply_type" jdbcType="VARCHAR"/>
+        <result property="demandSupplyBody" column="demand_supply_body" jdbcType="VARCHAR"/>
+        <result property="demandSupplyOrganization" column="demand_supply_organization" jdbcType="VARCHAR"/>
+        <result property="contactNumber" column="contact_number" jdbcType="VARCHAR"/>
+        <result property="resourceTitle" column="resource_title" jdbcType="VARCHAR"/>
+        <result property="resourceAddress" column="resource_address" jdbcType="VARCHAR"/>
+        <result property="resourceContent" column="resource_content" jdbcType="VARCHAR"/>
+        <result property="aidStationMark" column="aid_station_mark" jdbcType="TINYINT"/>
+        <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
+        <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+        <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+        <collection property="strayAnimalsFiles" column="key_id" select="selectResourceFileList"/>
+    </resultMap>
+    <resultMap id="StrayAnimalsFileResultMap" type="cn.basicPLY.animals.entity.StrayAnimalsFile">
+        <id property="keyId" column="file_key_id" jdbcType="VARCHAR"/>
+        <result property="fileName" column="file_name" jdbcType="VARCHAR"/>
+        <result property="filePath" column="file_path" jdbcType="VARCHAR"/>
+        <result property="fileCategory" column="file_category" jdbcType="VARCHAR"/>
+        <result property="deleteMark" column="file_delete_mark" jdbcType="TINYINT"/>
+        <result property="createBy" column="file_create_by" jdbcType="VARCHAR"/>
+        <result property="createDate" column="file_create_date" jdbcType="TIMESTAMP"/>
+        <result property="updateBy" column="file_update_by" jdbcType="VARCHAR"/>
+        <result property="updateDate" column="file_update_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
     <select id="selectResourcePage" resultMap="ResourcePage">
         SELECT
         SAR.KEY_ID,
@@ -79,27 +110,30 @@
         SAR.CREATE_BY,
         SAR.CREATE_DATE,
         SAR.UPDATE_BY,
-        SAR.UPDATE_DATE,
-
-        SAF.KEY_ID,
-        SAF.FILE_NAME,
-        SAF.FILE_PATH,
-        SAF.FILE_CATEGORY,
-        SAF.DELETE_MARK,
-        SAF.CREATE_BY,
-        SAF.CREATE_DATE,
-        SAF.UPDATE_BY,
-        SAF.UPDATE_DATE
+        SAR.UPDATE_DATE
         FROM stray_animals_resource SAR
-        LEFT JOIN stray_animals_resource_file SARF ON SAR.key_id = SARF.resource_id AND SARF.delete_mark = 1
-        LEFT JOIN stray_animals_file SAF ON SARF.file_id = SAF.key_id AND SAF.delete_mark = 1
         WHERE SAR.delete_mark = 1
         <if test="resourceType != null and resourceType != ''">
             AND SAR.RESOURCE_TYPE = #{resourceType}
         </if>
         ORDER BY SAR.aid_station_mark DESC, SAR.create_date DESC
     </select>
-    <select id="selectResourcesByKeyId" resultMap="ResourcePage">
+    <select id="selectResourceFileList" resultType="cn.basicPLY.animals.entity.StrayAnimalsFile">
+        SELECT SAF.key_id,
+               SAF.file_name,
+               SAF.file_path,
+               SAF.file_category,
+               SAF.delete_mark,
+               SAF.create_by,
+               SAF.create_date,
+               SAF.update_by,
+               SAF.update_date
+        FROM stray_animals_file SAF
+                 LEFT JOIN stray_animals_resource_file SARF ON SAF.key_id = SARF.file_id AND SARF.delete_mark = 1
+        WHERE SARF.resource_id = #{resourceId} AND SAF.delete_mark = 1
+    </select>
+
+    <select id="selectResourcesByKeyId" resultMap="ResourceVO">
         SELECT SAR.KEY_ID,
                SAR.FOREIGN_KEY_PUBLISHER,
                SAR.RESOURCE_TYPE,

@@ -40,7 +40,7 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
      * @return 返回数据列表
      */
     @Override
-    public List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(IPage<StrayAnimalsAdoptionVO> page, String userId, String adoptionTitle) {
+    public List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page, String userId, String adoptionTitle) {
         return baseMapper.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
     }
 
