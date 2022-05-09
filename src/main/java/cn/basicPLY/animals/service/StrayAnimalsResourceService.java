@@ -17,10 +17,12 @@ public interface StrayAnimalsResourceService extends IService<StrayAnimalsResour
     /**
      * 分页获取需求/供应信息
      *
-     * @param page 分页参数
+     * @param page     分页参数
+     * @param isItMine 是否查询我的发布信息
+     * @param keyId    当前登录用户ID
      * @return 需求/供应信息列表
      */
-    List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType);
+    List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType, String isItMine, String keyId);
 
     /**
      * 根据KeyId查询资源信息详情

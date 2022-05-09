@@ -116,6 +116,9 @@
         <if test="resourceType != null and resourceType != ''">
             AND SAR.RESOURCE_TYPE = #{resourceType}
         </if>
+        <if test="isItMine != null and isItMine == 'Y'.toString()">
+            AND SAR.FOREIGN_KEY_PUBLISHER = #{userId}
+        </if>
         ORDER BY SAR.aid_station_mark DESC, SAR.create_date DESC
     </select>
     <select id="selectResourceFileList" resultType="cn.basicPLY.animals.entity.StrayAnimalsFile">
@@ -130,7 +133,8 @@
                SAF.update_date
         FROM stray_animals_file SAF
                  LEFT JOIN stray_animals_resource_file SARF ON SAF.key_id = SARF.file_id AND SARF.delete_mark = 1
-        WHERE SARF.resource_id = #{resourceId} AND SAF.delete_mark = 1
+        WHERE SARF.resource_id = #{resourceId}
+          AND SAF.delete_mark = 1
     </select>
 
     <select id="selectResourcesByKeyId" resultMap="ResourceVO">

@@ -104,13 +104,15 @@ public class ResourceController {
     @ApiOperation("获取资源/需求信息列表")
     @GetMapping("getResources")
     public ResponseEntity<AjaxResult> getResources(Page<StrayAnimalsResourceVO> page,
-                                                   @RequestParam(required = false) String resourceType) {
+                                                   @RequestParam(required = false) String resourceType,
+                                                   @RequestParam(required = false) String isItMine) {
         log.info("开始执行获取资源/需求信息列表接口");
         //判断是否登录用户
-        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+        if ((ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId()))
+                && "Y".equals(isItMine)) {
             return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
         }
-        List<StrayAnimalsResourceVO> strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType);
+        List<StrayAnimalsResourceVO> strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, isItMine, UserUtils.getUserDetails().getKeyId());
         return new ResponseEntity<>(AjaxResult.success(page.setRecords(strayAnimalsResourceVOList)), HttpStatus.OK);
     }
 

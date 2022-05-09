@@ -20,10 +20,13 @@ public interface StrayAnimalsResourceMapper extends BaseMapper<StrayAnimalsResou
     /**
      * 分页获取需求/供应信息
      *
-     * @param page 分页参数
+     * @param page     分页参数
+     * @param isItMine 是否查询我的发布信息
+     * @param userId    当前登录用户ID
      * @return 需求/供应信息列表
      */
-    List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, @Param("resourceType") String resourceType);
+    List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, @Param("resourceType") String resourceType,
+                                                    @Param("isItMine") String isItMine, @Param("userId") String userId);
 
     List<StrayAnimalsFile> selectResourceFileList(String resourceId);
 
