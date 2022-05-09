@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * purpose:
@@ -112,7 +113,12 @@ public class ResourceController {
                 && "Y".equals(isItMine)) {
             return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
         }
-        List<StrayAnimalsResourceVO> strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, isItMine, UserUtils.getUserDetails().getKeyId());
+        List<StrayAnimalsResourceVO> strayAnimalsResourceVOList = null;
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails())) {
+            strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, isItMine, null);
+        } else {
+            strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, isItMine, UserUtils.getUserDetails().getKeyId());
+        }
         return new ResponseEntity<>(AjaxResult.success(page.setRecords(strayAnimalsResourceVOList)), HttpStatus.OK);
     }
 
