@@ -23,6 +23,12 @@ public class StrayAnimalsAdoptionDTO extends StrayAnimalsAdoption implements Ser
     private static final long serialVersionUID = -2611216654268565159L;
 
     /**
+     * 是否更新 Y：是；N/null:否
+     */
+    @ApiModelProperty("是否更新 Y:是;N/null:否")
+    private String whetherToUpdate;
+
+    /**
      * 领养图片关联中间表
      */
     @ApiModelProperty("领养图片关联中间表数据")

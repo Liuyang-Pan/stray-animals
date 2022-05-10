@@ -8,6 +8,11 @@ package cn.basicPLY.animals.enumerate;
  */
 public enum UniversalColumnEnum {
     /**
+     * 主键ID
+     */
+    KEY_ID("key_id", "主键ID"),
+
+    /**
      * 删除标识：1、未删除；0：已删除
      */
     DELETE_MARK("delete_mark", "删除标识：1、未删除；0：已删除"),

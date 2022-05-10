@@ -1,10 +1,9 @@
 package cn.basicPLY.animals.controller;
 
+import cn.basicPLY.animals.entity.*;
 import cn.basicPLY.animals.entity.DTO.StrayAnimalsAdoptionDTO;
-import cn.basicPLY.animals.entity.StrayAnimalsAdopter;
-import cn.basicPLY.animals.entity.StrayAnimalsAdoption;
-import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
+import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
 import cn.basicPLY.animals.service.StrayAnimalsAdopterService;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionFileService;
 import cn.basicPLY.animals.service.StrayAnimalsAdoptionService;
@@ -12,6 +11,7 @@ import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import cn.basicPLY.animals.utils.UserUtils;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.Api;
@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * purpose:领养动物相关接口
@@ -71,7 +72,7 @@ public class AdoptionController {
      * @param adoptionDTO 领养信息
      * @return 发布成功与否信息
      */
-    @ApiOperation("发布领养信息")
+    @ApiOperation("发布领养/更新领养信息")
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("/publish")
     public ResponseEntity<AjaxResult> publishAdoptionInfo(@RequestBody StrayAnimalsAdoptionDTO adoptionDTO) {
@@ -79,6 +80,28 @@ public class AdoptionController {
         //判断是否登录用户
         if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
             return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.BAD_REQUEST);
+        }
+        //更新执行逻辑
+        if ("Y".equals(adoptionDTO.getWhetherToUpdate())) {
+            StrayAnimalsAdoption strayAnimalsAdoption = new StrayAnimalsAdoption();
+            BeanUtils.copyProperties(adoptionDTO, strayAnimalsAdoption);
+            strayAnimalsAdoption.setUpdateBy(null != UserUtils.getUserDetails().getNickName() ? UserUtils.getUserDetails().getNickName() : "");
+            strayAnimalsAdoption.setUpdateDate(new Date());
+            int result = adoptionService.getBaseMapper().updateById(strayAnimalsAdoption);
+
+            //先删文件关联
+            QueryWrapper<StrayAnimalsAdoptionFile> fileQueryWrapper = new QueryWrapper<>();
+            fileQueryWrapper.eq("adoption_id", strayAnimalsAdoption.getKeyId());
+            adoptionFileService.getBaseMapper().delete(fileQueryWrapper);
+            //再新增文件关联
+            if (ObjectUtils.isNotEmpty(adoptionDTO.getStrayAnimalsAdoptionFile())) {
+                adoptionDTO.getStrayAnimalsAdoptionFile().forEach(file -> file.setAdoptionId(strayAnimalsAdoption.getKeyId()));
+                adoptionFileService.saveBatch(adoptionDTO.getStrayAnimalsAdoptionFile());
+            }
+            if (result > 0) {
+                return new ResponseEntity<>(AjaxResult.success("更新成功"), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(AjaxResult.error("更新失败"), HttpStatus.OK);
         }
         int result = 0;
         //创建领养信息主表对象
@@ -89,7 +112,7 @@ public class AdoptionController {
         strayAnimalsAdoption.setForeignKeyPublisher(UserUtils.getUserDetails().getKeyId());
         //判断是否是救助站
         QueryWrapper<StrayAnimalsAidStation> checkAidStation = new QueryWrapper<>();
-        checkAidStation.eq("delete_mark", 1)
+        checkAidStation.eq(UniversalColumnEnum.DELETE_MARK.getColumn(), 1)
                 .eq("user_id", UserUtils.getUserDetails().getKeyId());
         Long aLong = aidStationService.getBaseMapper().selectCount(checkAidStation);
         if (ObjectUtils.isNotEmpty(aLong) && aLong > 0) {
@@ -112,6 +135,41 @@ public class AdoptionController {
             return new ResponseEntity<>(AjaxResult.success("发布成功"), HttpStatus.OK);
         }
         return new ResponseEntity<>(AjaxResult.error("发布失败"), HttpStatus.BAD_REQUEST);
+    }
+
+    @ApiOperation("删除领养信息")
+    @Transactional(rollbackFor = Exception.class)
+    @DeleteMapping("deleteAdoption")
+    public ResponseEntity<AjaxResult> deleteAdoption(@RequestBody List<String> adoptionIds) {
+        AtomicBoolean flag = new AtomicBoolean(false);
+        //首先删除文件关联
+        UpdateWrapper<StrayAnimalsAdoptionFile> updateWrapper = new UpdateWrapper<>();
+        adoptionIds.forEach(id -> {
+            updateWrapper.eq("adoption_id", id);
+            updateWrapper.set(UniversalColumnEnum.DELETE_MARK.getColumn(), 0);
+            flag.set(adoptionFileService.update(updateWrapper));
+            updateWrapper.clear();
+        });
+        //再删除领养申请
+        UpdateWrapper<StrayAnimalsAdopter> adopterUpdateWrapper = new UpdateWrapper<>();
+        adoptionIds.forEach(id -> {
+            adopterUpdateWrapper.eq("adoption_id", id);
+            adopterUpdateWrapper.set(UniversalColumnEnum.DELETE_MARK.getColumn(), 0);
+            flag.set(adopterService.update(adopterUpdateWrapper));
+            adopterUpdateWrapper.clear();
+        });
+        //再删除领养主表
+        UpdateWrapper<StrayAnimalsAdoption> adoptionUpdateWrapper = new UpdateWrapper<>();
+        adoptionIds.forEach(id -> {
+            adoptionUpdateWrapper.eq("key_id", id);
+            adoptionUpdateWrapper.set(UniversalColumnEnum.DELETE_MARK.getColumn(), 0);
+            flag.set(adoptionService.update(adoptionUpdateWrapper));
+            adoptionUpdateWrapper.clear();
+        });
+        if (flag.get()) {
+            return ResponseEntity.ok(AjaxResult.success("删除数据成功"));
+        }
+        return ResponseEntity.ok(AjaxResult.error("删除数据失败"));
     }
 
     /**
@@ -161,7 +219,7 @@ public class AdoptionController {
         }
         //判断是否已经申请
         QueryWrapper<StrayAnimalsAdopter> checkAdopter = new QueryWrapper<>();
-        checkAdopter.eq("delete_mark", 1)
+        checkAdopter.eq(UniversalColumnEnum.DELETE_MARK.getColumn(), 1)
                 .eq("adopter_id", UserUtils.getUserDetails().getKeyId())
                 .eq("adoption_id", strayAnimalsAdopter.getAdoptionId());
         Long aLong = adopterService.getBaseMapper().selectCount(checkAdopter);
@@ -184,6 +242,18 @@ public class AdoptionController {
             return new ResponseEntity<>(AjaxResult.success("申请成功"), HttpStatus.OK);
         }
         return new ResponseEntity<>(AjaxResult.error("申请失败"), HttpStatus.OK);
+    }
+
+    @ApiOperation("取消领养申请")
+    @PutMapping("/cancelAdoption")
+    public ResponseEntity<AjaxResult> cancelAdoption(String keyId) {
+        UpdateWrapper<StrayAnimalsAdopter> adopterUpdateWrapper = new UpdateWrapper<>();
+        adopterUpdateWrapper.set(UniversalColumnEnum.DELETE_MARK.getColumn(), 0);
+        adopterUpdateWrapper.eq(UniversalColumnEnum.KEY_ID.getColumn(), keyId);
+        if (adopterService.update(adopterUpdateWrapper)) {
+            return ResponseEntity.ok(AjaxResult.success("取消领养申请成功"));
+        }
+        return ResponseEntity.ok(AjaxResult.error("取消领养申请失败"));
     }
 
     @ApiOperation("同意申请")
