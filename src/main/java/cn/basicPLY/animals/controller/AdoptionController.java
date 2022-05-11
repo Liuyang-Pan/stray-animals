@@ -247,9 +247,15 @@ public class AdoptionController {
     @ApiOperation("取消领养申请")
     @PutMapping("/cancelAdoption")
     public ResponseEntity<AjaxResult> cancelAdoption(String keyId) {
+        log.info("开始执行取消领养申请接口");
+        //判断是否登录用户
+        if (ObjectUtils.isEmpty(UserUtils.getUserDetails()) || StringUtils.isBlank(UserUtils.getUserDetails().getKeyId())) {
+            return new ResponseEntity<>(AjaxResult.error("请登录用户"), HttpStatus.OK);
+        }
         UpdateWrapper<StrayAnimalsAdopter> adopterUpdateWrapper = new UpdateWrapper<>();
         adopterUpdateWrapper.set(UniversalColumnEnum.DELETE_MARK.getColumn(), 0);
-        adopterUpdateWrapper.eq(UniversalColumnEnum.KEY_ID.getColumn(), keyId);
+        adopterUpdateWrapper.eq("adoption_id", keyId);
+        adopterUpdateWrapper.eq("adopter_id", UserUtils.getUserDetails().getKeyId());
         if (adopterService.update(adopterUpdateWrapper)) {
             return ResponseEntity.ok(AjaxResult.success("取消领养申请成功"));
         }

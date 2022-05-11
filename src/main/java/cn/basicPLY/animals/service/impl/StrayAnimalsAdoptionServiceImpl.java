@@ -55,8 +55,8 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
         StrayAnimalsAdoptionVO strayAnimalsAdoptionVO = baseMapper.selectStrayAnimalsAdoptionInfoByKeyId(keyId);
         boolean isThePublisher = true;
         //当前登录用户于发布领养信息用户相等时 获取领养人相关信息
-        if (ObjectUtils.isNotEmpty(UserUtils.getUserDetails())
-                && StringUtils.isNotBlank(UserUtils.getUserDetails().getKeyId())
+        if ((ObjectUtils.isNotEmpty(UserUtils.getUserDetails())
+                && StringUtils.isNotBlank(UserUtils.getUserDetails().getKeyId()))
                 && UserUtils.getUserDetails().getKeyId().equals(strayAnimalsAdoptionVO.getForeignKeyPublisher())) {
             strayAnimalsAdoptionVO.setStrayAnimalsAdopterVOS(baseMapper.selectStrayAnimalsAdopterList(keyId));
             isThePublisher = false;
@@ -74,7 +74,7 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
                 whetherToDisplayInformation = false;
             }
         }
-        if (isThePublisher || whetherToDisplayInformation) {
+        if (isThePublisher && whetherToDisplayInformation) {
             strayAnimalsAdoptionVO.setAdoptionPhoneNumber(null);
         }
         return strayAnimalsAdoptionVO;
