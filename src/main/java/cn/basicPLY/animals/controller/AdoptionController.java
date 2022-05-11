@@ -83,6 +83,7 @@ public class AdoptionController {
         }
         //更新执行逻辑
         if ("Y".equals(adoptionDTO.getWhetherToUpdate())) {
+            //更新主表
             StrayAnimalsAdoption strayAnimalsAdoption = new StrayAnimalsAdoption();
             BeanUtils.copyProperties(adoptionDTO, strayAnimalsAdoption);
             strayAnimalsAdoption.setUpdateBy(null != UserUtils.getUserDetails().getNickName() ? UserUtils.getUserDetails().getNickName() : "");
@@ -141,6 +142,7 @@ public class AdoptionController {
     @Transactional(rollbackFor = Exception.class)
     @DeleteMapping("deleteAdoption")
     public ResponseEntity<AjaxResult> deleteAdoption(@RequestBody List<String> adoptionIds) {
+        log.info("开始删除领养信息接口");
         AtomicBoolean flag = new AtomicBoolean(false);
         //首先删除文件关联
         UpdateWrapper<StrayAnimalsAdoptionFile> updateWrapper = new UpdateWrapper<>();
