@@ -59,6 +59,12 @@ public class ResourceController {
     @Autowired
     private StrayAnimalsAidStationService aidStationService;
 
+    /**
+     * 咨询/需求发布接口
+     *
+     * @param resourceDTO 资源封装实体
+     * @return 发布是否成功
+     */
     @ApiOperation("发布资源/需求接口")
     @Transactional(rollbackFor = Exception.class)
     @PostMapping("publishResources")
