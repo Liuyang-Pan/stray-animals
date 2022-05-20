@@ -3,10 +3,12 @@ package cn.basicPLY.animals.service.impl;
 import cn.basicPLY.animals.entity.VO.CertificationUserDetails;
 import cn.basicPLY.animals.entity.StrayAnimalsUser;
 import cn.basicPLY.animals.entity.StrayAnimalsUserAuthority;
+import cn.basicPLY.animals.enumerate.Constants;
 import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
 import cn.basicPLY.animals.mapper.StrayAnimalsUserAuthorityMapper;
 import cn.basicPLY.animals.mapper.StrayAnimalsUserMapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,12 +44,15 @@ public class StrayAnimalsUserDetailsServiceImpl implements UserDetailsService {
         //创建查询条件
         QueryWrapper<StrayAnimalsUser> strayAnimalsUserQueryWrapper = new QueryWrapper<>();
         //设置用户名获取
-        strayAnimalsUserQueryWrapper.eq("username", username).eq(UniversalColumnEnum.DELETE_MARK.getColumn(), 1);
+        strayAnimalsUserQueryWrapper.eq("username", username).eq(UniversalColumnEnum.DELETE_MARK.getColumn(), Constants.NOT_DELETED);
         //获取用户信息
         StrayAnimalsUser strayAnimalsUser = strayAnimalsUserMapper.selectOne(strayAnimalsUserQueryWrapper);
         //判断是否存在用户
         if (ObjectUtils.isEmpty(strayAnimalsUser)) {
             throw new UsernameNotFoundException("用户不存在 请注册");
+        }
+        if (null != strayAnimalsUser.getEnabled() && Constants.DISABLED == strayAnimalsUser.getEnabled()) {
+            throw new UsernameNotFoundException("用户已禁用 请联系管理员");
         }
         //转换为认证用户信息
         CertificationUserDetails certificationUserDetails = new CertificationUserDetails();
