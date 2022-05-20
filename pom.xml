@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.basicPLY</groupId>
     <artifactId>stray-animals</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.2-SNAPSHOT</version>
     <name>stray-animals</name>
     <description>stray-animals</description>
     <properties>
