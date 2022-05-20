@@ -26,4 +26,14 @@ public interface Constants {
      * 用户已禁用
      */
     int DISABLED = 0;
+
+    /**
+     * 志愿者认证通过
+     */
+    int VOLUNTEER_CERTIFICATION_PASSED = 1;
+
+    /**
+     * 志愿者认证失败
+     */
+    int VOLUNTEER_AUTHENTICATION_FAILED = 0;
 }

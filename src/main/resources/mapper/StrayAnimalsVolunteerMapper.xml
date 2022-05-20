@@ -18,6 +18,7 @@
             <result property="sex" column="sex" jdbcType="VARCHAR"/>
             <result property="personalProfile" column="personal_profile" jdbcType="VARCHAR"/>
             <result property="expectedJob" column="expected_job" jdbcType="VARCHAR"/>
+            <result property="certificationMark" column="certification_mark" jdbcType="TINYINT"/>
             <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
             <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
             <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
@@ -30,7 +31,8 @@
         hometown,contact_number,volunteer_id_code,
         volunteer_city,start_date,stop_date,
         education,sex,personal_profile,
-        expected_job,delete_mark,create_by,
-        create_date,update_by,update_date
+        expected_job,certification_mark,delete_mark,
+        create_by,create_date,update_by,
+        update_date
     </sql>
 </mapper>

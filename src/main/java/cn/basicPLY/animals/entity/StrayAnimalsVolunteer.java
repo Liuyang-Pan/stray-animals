@@ -82,6 +82,11 @@ public class StrayAnimalsVolunteer implements Serializable {
     private String expectedJob;
 
     /**
+     * 是否删除（1：已认证；0：未认证）
+     */
+    private Integer certificationMark;
+
+    /**
      * 是否删除（1：未删除；0：已删除）
      */
     private Integer deleteMark;
