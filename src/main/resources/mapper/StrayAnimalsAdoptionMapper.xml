@@ -109,11 +109,14 @@
         FROM stray_animals_adoption SAA
         <where>
             SAA.delete_mark = 1
-            <if test="userId != null and userId != ''">
-                AND SAA.foreign_key_publisher = #{userId}
-            </if>
             <if test="adoptionTitle != null and adoptionTitle != ''">
-                AND SAA.adoption_title like CONCAT('%',#{adoptionTitle},'%')
+                AND SAA.animal_breed like CONCAT('%',#{adoptionTitle},'%')
+            </if>
+            <if test="adoptionContent != null and adoptionContent != ''">
+                AND SAA.adoption_content like CONCAT('%',#{adoptionContent},'%')
+            </if>
+            <if test="adoptionAddress != null and adoptionAddress != ''">
+                AND SAA.adoption_address like CONCAT('%',#{adoptionAddress},'%')
             </if>
         </where>
         ORDER BY SAA.aid_station_mark DESC,SAA.create_date DESC
@@ -131,7 +134,8 @@
                SAF.update_date
         FROM stray_animals_file SAF
                  LEFT JOIN stray_animals_adoption_file SAAF ON SAF.key_id = SAAF.file_id AND SAAF.delete_mark = 1
-        WHERE SAAF.adoption_id = ${adoptionId} AND SAF.delete_mark = 1
+        WHERE SAAF.adoption_id = ${adoptionId}
+          AND SAF.delete_mark = 1
     </select>
 
     <select id="selectStrayAnimalsAdoptionInfoByKeyId" resultMap="StrayAnimalsAdoptionVO">

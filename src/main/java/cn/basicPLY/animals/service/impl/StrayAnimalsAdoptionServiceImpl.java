@@ -34,14 +34,15 @@ public class StrayAnimalsAdoptionServiceImpl extends ServiceImpl<StrayAnimalsAdo
     /**
      * 分页查询领养信息
      *
-     * @param page          分页参数
-     * @param userId        用户ID
-     * @param adoptionTitle 模糊查询标题
+     * @param page            分页参数
+     * @param adoptionTitle   模糊查询标题
+     * @param adoptionContent 模糊查询内容详情
+     * @param adoptionAddress 模糊查询地址
      * @return 返回数据列表
      */
     @Override
-    public List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page, String userId, String adoptionTitle) {
-        return baseMapper.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
+    public List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page, String adoptionTitle, String adoptionContent, String adoptionAddress) {
+        return baseMapper.selectStrayAnimalsAdoptionPageVO(page, adoptionTitle, adoptionContent, adoptionAddress);
     }
 
     /**

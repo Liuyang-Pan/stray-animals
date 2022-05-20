@@ -9,15 +9,15 @@ import lombok.EqualsAndHashCode;
 import java.io.Serializable;
 
 /**
- * purpose:用户管理VO
+ * purpose:用户列表DTO
  *
  * @author Pan Liuyang
  * 2022/5/20 20:05
  */
-@ApiModel("用户管理VO")
+@ApiModel("用户列表DTO")
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class UserManagementVO extends StrayAnimalsUser implements Serializable {
+public class UserManagementDTO extends StrayAnimalsUser implements Serializable {
     private static final long serialVersionUID = 1380160142198980538L;
 
     /**

@@ -18,14 +18,16 @@ public interface StrayAnimalsAdoptionService extends IService<StrayAnimalsAdopti
     /**
      * 分页查询领养信息
      *
-     * @param page          分页参数
-     * @param userId        用户ID
-     * @param adoptionTitle 模糊查询标题
+     * @param page            分页参数
+     * @param adoptionTitle   模糊查询标题
+     * @param adoptionContent 模糊查询描述内容
+     * @param adoptionAddress 模糊查询标题
      * @return 返回数据列表
      */
     List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page,
-                                                                  String userId,
-                                                                  String adoptionTitle);
+                                                                  String adoptionTitle,
+                                                                  String adoptionContent,
+                                                                  String adoptionAddress);
 
     /**
      * 根据领养KeyId查询领养详情

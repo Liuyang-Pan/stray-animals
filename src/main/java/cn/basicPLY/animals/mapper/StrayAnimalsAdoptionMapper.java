@@ -22,14 +22,16 @@ public interface StrayAnimalsAdoptionMapper extends BaseMapper<StrayAnimalsAdopt
     /**
      * 分页查询领养信息
      *
-     * @param page          分页参数
-     * @param userId        用户ID
-     * @param adoptionTitle 模糊查询标题
+     * @param page            分页参数
+     * @param adoptionTitle   模糊查询标题
+     * @param adoptionContent 模糊查询内容详情
+     * @param adoptionAddress 模糊查询地址
      * @return 返回数据列表
      */
     List<StrayAnimalsAdoptionVO> selectStrayAnimalsAdoptionPageVO(Page<StrayAnimalsAdoptionVO> page,
-                                                                  String userId,
-                                                                  String adoptionTitle);
+                                                                  String adoptionTitle,
+                                                                  String adoptionContent,
+                                                                  String adoptionAddress);
 
     List<StrayAnimalsFile> selectAdoptionFileList(String adoptionId);
 

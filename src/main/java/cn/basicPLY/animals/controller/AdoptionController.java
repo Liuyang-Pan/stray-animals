@@ -182,11 +182,12 @@ public class AdoptionController {
     @ApiOperation("获取领养列表")
     @GetMapping("/getAdoptionList")
     public ResponseEntity<IPage<StrayAnimalsAdoptionVO>> getAdoptionList(Page<StrayAnimalsAdoptionVO> page,
-                                                                         @RequestParam(required = false) String userId,
-                                                                         @RequestParam(required = false) String adoptionTitle) {
+                                                                         @RequestParam(required = false) String adoptionTitle,
+                                                                         @RequestParam(required = false) String adoptionContent,
+                                                                         @RequestParam(required = false) String adoptionAddress) {
         log.info("开始执行获取领养列表接口");
         //分页查询
-        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(page, userId, adoptionTitle);
+        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(page, adoptionTitle, adoptionContent, adoptionAddress);
         //使电话显示为NULL
         strayAnimalsAdoptionVOS.forEach(adoption -> adoption.setAdoptionPhoneNumber(null));
         return new ResponseEntity<>(page.setRecords(strayAnimalsAdoptionVOS), HttpStatus.OK);

@@ -1,6 +1,6 @@
 package cn.basicPLY.animals.controller.admin;
 
-import cn.basicPLY.animals.entity.DTO.UserManagementVO;
+import cn.basicPLY.animals.entity.DTO.UserManagementDTO;
 import cn.basicPLY.animals.entity.StrayAnimalsUser;
 import cn.basicPLY.animals.enumerate.Constants;
 import cn.basicPLY.animals.service.StrayAnimalsUserService;
@@ -16,6 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * purpose:用户管理相关接口
  *
@@ -28,6 +31,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user-management")
 public class UserManagementController {
 
+    /**
+     * 用户Service
+     */
     @Autowired
     private StrayAnimalsUserService strayAnimalsUserService;
 
@@ -39,7 +45,7 @@ public class UserManagementController {
      */
     @ApiOperation("查询用户列表接口")
     @GetMapping("/list")
-    public ResponseEntity<AjaxResult> list(UserManagementVO userManagement) {
+    public ResponseEntity<AjaxResult> list(UserManagementDTO userManagement) {
         Page<StrayAnimalsUser> page = new Page<>(userManagement.getCurrent(), userManagement.getSize());
         LambdaQueryWrapper<StrayAnimalsUser> userQueryWrapper = new LambdaQueryWrapper<>();
         userQueryWrapper
@@ -68,6 +74,28 @@ public class UserManagementController {
         deleteUser.setKeyId(keyId);
         int result = strayAnimalsUserService.getBaseMapper().updateById(deleteUser);
         if (result > 0) {
+            return ResponseEntity.ok(AjaxResult.success("删除成功"));
+        }
+        return ResponseEntity.ok(AjaxResult.error("删除失败"));
+    }
+
+    /**
+     * 批量删除用户接口
+     *
+     * @param keyIdList 用户ID列表
+     * @return 删除是否成功结果
+     */
+    @ApiOperation("批量删除用户接口")
+    @DeleteMapping("/delete/list")
+    public ResponseEntity<AjaxResult> delete(@RequestBody List<String> keyIdList) {
+        AtomicInteger result = new AtomicInteger();
+        StrayAnimalsUser deleteUser = new StrayAnimalsUser();
+        deleteUser.setDeleteMark(Constants.DELETED);
+        keyIdList.forEach(keyId -> {
+            deleteUser.setKeyId(keyId);
+            result.set(strayAnimalsUserService.getBaseMapper().updateById(deleteUser));
+        });
+        if (result.get() > 0) {
             return ResponseEntity.ok(AjaxResult.success("删除成功"));
         }
         return ResponseEntity.ok(AjaxResult.error("删除失败"));
