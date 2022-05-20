@@ -82,7 +82,7 @@ public class VolunteerManagementController {
      * @return 删除是否成功结果
      */
     @ApiOperation("同意志愿者申请信息接口")
-    @DeleteMapping("/apply/{keyId}")
+    @PutMapping("/apply/{keyId}")
     public ResponseEntity<AjaxResult> apply(@PathVariable("keyId") String keyId) {
         StrayAnimalsVolunteer applyVolunteer = new StrayAnimalsVolunteer();
         applyVolunteer.setCertificationMark(Constants.VOLUNTEER_CERTIFICATION_PASSED);
