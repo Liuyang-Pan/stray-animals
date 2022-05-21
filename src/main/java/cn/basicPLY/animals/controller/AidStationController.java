@@ -1,7 +1,8 @@
 package cn.basicPLY.animals.controller;
 
 import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
-import cn.basicPLY.animals.entity.VO.StrayAnimalsAdoptionVO;
+import cn.basicPLY.animals.enumerate.Constants;
+import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
 import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
 import cn.basicPLY.animals.utils.AjaxResult;
 import cn.basicPLY.animals.utils.UserUtils;
@@ -65,10 +66,20 @@ public class AidStationController {
 
     @ApiOperation("获取救助站/基地列表接口")
     @GetMapping("/getAidStationList")
-    public ResponseEntity<AjaxResult> getAidStationList(Page<StrayAnimalsAidStation> page, String stationName) {
+    public ResponseEntity<AjaxResult> getAidStationList(Page<StrayAnimalsAidStation> page,
+                                                        @RequestParam(required = false) String stationName,
+                                                        @RequestParam(required = false) String principal,
+                                                        @RequestParam(required = false) String address) {
         QueryWrapper<StrayAnimalsAidStation> aidStationQueryWrapper = new QueryWrapper<>();
+        aidStationQueryWrapper.eq(UniversalColumnEnum.DELETE_MARK.getColumn(), Constants.NOT_DELETED);
         if (StringUtils.isNotBlank(stationName)) {
             aidStationQueryWrapper.like("station_name", stationName);
+        }
+        if (StringUtils.isNotBlank(principal)) {
+            aidStationQueryWrapper.like("principal_name", principal);
+        }
+        if (StringUtils.isNotBlank(address)) {
+            aidStationQueryWrapper.like("station_address", address);
         }
         Page<StrayAnimalsAidStation> strayAnimalsAidStationPage = aidStationService.getBaseMapper().selectPage(page, aidStationQueryWrapper);
         return new ResponseEntity<>(AjaxResult.success("获取数据成功", strayAnimalsAidStationPage), HttpStatus.OK);

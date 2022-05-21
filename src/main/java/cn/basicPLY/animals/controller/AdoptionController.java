@@ -175,19 +175,21 @@ public class AdoptionController {
     }
 
     /**
-     * 获取领养列表
-     *
+     * @param page            分页参数
+     * @param animalType      模糊查询动物类型
+     * @param animalBreed     模糊查询动物品种
+     * @param adoptionAddress 模糊查询标题
      * @return 分页领养数据
      */
     @ApiOperation("获取领养列表")
     @GetMapping("/getAdoptionList")
     public ResponseEntity<IPage<StrayAnimalsAdoptionVO>> getAdoptionList(Page<StrayAnimalsAdoptionVO> page,
-                                                                         @RequestParam(required = false) String adoptionTitle,
-                                                                         @RequestParam(required = false) String adoptionContent,
+                                                                         @RequestParam(required = false) String animalType,
+                                                                         @RequestParam(required = false) String animalBreed,
                                                                          @RequestParam(required = false) String adoptionAddress) {
         log.info("开始执行获取领养列表接口");
         //分页查询
-        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(page, adoptionTitle, adoptionContent, adoptionAddress);
+        List<StrayAnimalsAdoptionVO> strayAnimalsAdoptionVOS = adoptionService.selectStrayAnimalsAdoptionPageVO(page, animalType, animalBreed, adoptionAddress);
         //使电话显示为NULL
         strayAnimalsAdoptionVOS.forEach(adoption -> adoption.setAdoptionPhoneNumber(null));
         return new ResponseEntity<>(page.setRecords(strayAnimalsAdoptionVOS), HttpStatus.OK);

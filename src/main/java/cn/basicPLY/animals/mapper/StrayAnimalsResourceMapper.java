@@ -22,11 +22,13 @@ public interface StrayAnimalsResourceMapper extends BaseMapper<StrayAnimalsResou
      *
      * @param page     分页参数
      * @param isItMine 是否查询我的发布信息
-     * @param userId    当前登录用户ID
+     * @param userId   当前登录用户ID
      * @return 需求/供应信息列表
      */
     List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, @Param("resourceType") String resourceType,
-                                                    @Param("isItMine") String isItMine, @Param("userId") String userId);
+                                                    @Param("demandSupplyType") String demandSupplyType, @Param("resourceTitle") String resourceTitle,
+                                                    @Param("resourceAddress") String resourceAddress, @Param("isItMine") String isItMine,
+                                                    @Param("userId") String userId);
 
     List<StrayAnimalsFile> selectResourceFileList(String resourceId);
 

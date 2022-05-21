@@ -1,7 +1,9 @@
 package cn.basicPLY.animals.controller;
 
-import cn.basicPLY.animals.entity.*;
 import cn.basicPLY.animals.entity.DTO.StrayAnimalsResourceDTO;
+import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
+import cn.basicPLY.animals.entity.StrayAnimalsResource;
+import cn.basicPLY.animals.entity.StrayAnimalsResourceFile;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO;
 import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
 import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
@@ -26,7 +28,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -78,7 +79,7 @@ public class ResourceController {
         if ("Y".equals(resourceDTO.getWhetherToUpdate())) {
             //更新主表
             StrayAnimalsResource resource = new StrayAnimalsResource();
-            BeanUtils.copyProperties(resourceDTO,resource);
+            BeanUtils.copyProperties(resourceDTO, resource);
             resource.setUpdateBy(null != UserUtils.getUserDetails().getNickName() ? UserUtils.getUserDetails().getNickName() : "");
             resource.setUpdateDate(new Date());
             int result = resourceService.getBaseMapper().updateById(resource);
@@ -139,6 +140,9 @@ public class ResourceController {
     @GetMapping("getResources")
     public ResponseEntity<AjaxResult> getResources(Page<StrayAnimalsResourceVO> page,
                                                    @RequestParam(required = false) String resourceType,
+                                                   @RequestParam(required = false) String demandSupplyType,
+                                                   @RequestParam(required = false) String resourceTitle,
+                                                   @RequestParam(required = false) String resourceAddress,
                                                    @RequestParam(required = false) String isItMine) {
         log.info("开始执行获取资源/需求信息列表接口");
         //判断是否登录用户
@@ -148,9 +152,9 @@ public class ResourceController {
         }
         List<StrayAnimalsResourceVO> strayAnimalsResourceVOList = null;
         if (ObjectUtils.isEmpty(UserUtils.getUserDetails())) {
-            strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, isItMine, null);
+            strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, demandSupplyType, resourceTitle, resourceAddress, isItMine, null);
         } else {
-            strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, isItMine, UserUtils.getUserDetails().getKeyId());
+            strayAnimalsResourceVOList = resourceService.selectResourcePage(page, resourceType, demandSupplyType, resourceTitle, resourceAddress, isItMine, UserUtils.getUserDetails().getKeyId());
         }
         return new ResponseEntity<>(AjaxResult.success(page.setRecords(strayAnimalsResourceVOList)), HttpStatus.OK);
     }

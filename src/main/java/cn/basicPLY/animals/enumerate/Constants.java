@@ -28,12 +28,12 @@ public interface Constants {
     int DISABLED = 0;
 
     /**
-     * 志愿者认证通过
+     * 志愿者/救助基地 认证通过
      */
     int VOLUNTEER_CERTIFICATION_PASSED = 1;
 
     /**
-     * 志愿者认证失败
+     * 志愿者/救助基地 认证失败
      */
     int VOLUNTEER_AUTHENTICATION_FAILED = 0;
 }

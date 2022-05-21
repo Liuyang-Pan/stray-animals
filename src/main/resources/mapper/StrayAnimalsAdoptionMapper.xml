@@ -109,11 +109,11 @@
         FROM stray_animals_adoption SAA
         <where>
             SAA.delete_mark = 1
-            <if test="adoptionTitle != null and adoptionTitle != ''">
-                AND SAA.animal_breed like CONCAT('%',#{adoptionTitle},'%')
+            <if test="animalType != null and animalType != ''">
+                AND SAA.animal_type like CONCAT('%',#{animalType},'%')
             </if>
-            <if test="adoptionContent != null and adoptionContent != ''">
-                AND SAA.adoption_content like CONCAT('%',#{adoptionContent},'%')
+            <if test="animalBreed != null and animalBreed != ''">
+                AND SAA.animal_breed like CONCAT('%',#{animalBreed},'%')
             </if>
             <if test="adoptionAddress != null and adoptionAddress != ''">
                 AND SAA.adoption_address like CONCAT('%',#{adoptionAddress},'%')

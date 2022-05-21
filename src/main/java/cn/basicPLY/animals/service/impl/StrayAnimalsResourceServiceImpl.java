@@ -22,14 +22,18 @@ public class StrayAnimalsResourceServiceImpl extends ServiceImpl<StrayAnimalsRes
     /**
      * 分页获取需求/供应信息
      *
-     * @param page     分页参数
-     * @param isItMine 是否查询我的发布信息
-     * @param keyId    当前登录用户ID
+     * @param page             分页参数
+     * @param resourceType     资源类型
+     * @param demandSupplyType 需求供应类型(资金/物资/场地/其他)
+     * @param resourceTitle    资源标题
+     * @param resourceAddress  资源地址
+     * @param isItMine         是否查询我的发布信息
+     * @param keyId            当前登录用户ID
      * @return 需求/供应信息列表
      */
     @Override
-    public List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType, String isItMine, String keyId) {
-        return baseMapper.selectResourcePage(page, resourceType, isItMine, keyId);
+    public List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType, String demandSupplyType, String resourceTitle, String resourceAddress, String isItMine, String keyId) {
+        return baseMapper.selectResourcePage(page, resourceType, demandSupplyType, resourceTitle, resourceAddress, isItMine, keyId);
     }
 
     /**

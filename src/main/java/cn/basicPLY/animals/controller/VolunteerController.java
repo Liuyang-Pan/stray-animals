@@ -13,10 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -59,5 +56,11 @@ public class VolunteerController {
         volunteer.setCreateDate(new Date());
         volunteerService.getBaseMapper().insert(volunteer);
         return new ResponseEntity<>(AjaxResult.success("申请志愿者成功"), HttpStatus.OK);
+    }
+
+    @ApiOperation("获取志愿者信息详情接口")
+    @GetMapping("/getVolunteerInfo/{keyId}")
+    public ResponseEntity<AjaxResult> getAidStationList(@PathVariable String keyId) {
+        return new ResponseEntity<>(AjaxResult.success("获取数据成功", volunteerService.getBaseMapper().selectById(keyId)), HttpStatus.OK);
     }
 }

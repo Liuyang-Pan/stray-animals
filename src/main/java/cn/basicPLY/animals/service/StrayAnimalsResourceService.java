@@ -4,6 +4,7 @@ import cn.basicPLY.animals.entity.StrayAnimalsResource;
 import cn.basicPLY.animals.entity.VO.StrayAnimalsResourceVO;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -17,12 +18,17 @@ public interface StrayAnimalsResourceService extends IService<StrayAnimalsResour
     /**
      * 分页获取需求/供应信息
      *
-     * @param page     分页参数
-     * @param isItMine 是否查询我的发布信息
-     * @param keyId    当前登录用户ID
+     * @param page             分页参数
+     * @param resourceType     资源类型
+     * @param demandSupplyType 需求供应类型(资金/物资/场地/其他)
+     * @param resourceTitle    资源标题
+     * @param resourceAddress  资源地址
+     * @param isItMine         是否查询我的发布信息
+     * @param keyId            当前登录用户ID
      * @return 需求/供应信息列表
      */
-    List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType, String isItMine, String keyId);
+    List<StrayAnimalsResourceVO> selectResourcePage(Page<StrayAnimalsResourceVO> page, String resourceType, String demandSupplyType,
+                                                    String resourceTitle, String resourceAddress, String isItMine, String keyId);
 
     /**
      * 根据KeyId查询资源信息详情

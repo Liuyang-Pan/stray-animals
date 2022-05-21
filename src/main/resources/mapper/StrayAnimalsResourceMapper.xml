@@ -116,6 +116,15 @@
         <if test="resourceType != null and resourceType != ''">
             AND SAR.RESOURCE_TYPE = #{resourceType}
         </if>
+        <if test="demandSupplyType != null and demandSupplyType != ''">
+            AND SAR.DEMAND_SUPPLY_TYPE like CONCAT('%',#{demandSupplyType},'%')
+        </if>
+        <if test="resourceTitle != null and resourceTitle != ''">
+            AND SAR.RESOURCE_TITLE like CONCAT('%',#{resourceTitle},'%')
+        </if>
+        <if test="resourceAddress != null and resourceAddress != ''">
+            AND SAR.RESOURCE_ADDRESS like CONCAT('%',#{resourceAddress},'%')
+        </if>
         <if test="isItMine != null and isItMine == 'Y'.toString()">
             AND SAR.FOREIGN_KEY_PUBLISHER = #{userId}
         </if>
