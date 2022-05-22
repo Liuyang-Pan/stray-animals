@@ -1,6 +1,8 @@
 package cn.basicPLY.animals.controller;
 
 import cn.basicPLY.animals.entity.StrayAnimalsAidStation;
+import cn.basicPLY.animals.entity.StrayAnimalsUserAuthority;
+import cn.basicPLY.animals.entity.VO.CertificationUserDetails;
 import cn.basicPLY.animals.enumerate.Constants;
 import cn.basicPLY.animals.enumerate.UniversalColumnEnum;
 import cn.basicPLY.animals.service.StrayAnimalsAidStationService;
@@ -19,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * purpose:
@@ -72,6 +75,14 @@ public class AidStationController {
                                                         @RequestParam(required = false) String address) {
         QueryWrapper<StrayAnimalsAidStation> aidStationQueryWrapper = new QueryWrapper<>();
         aidStationQueryWrapper.eq(UniversalColumnEnum.DELETE_MARK.getColumn(), Constants.NOT_DELETED);
+        //判断是否登录用户
+        if (ObjectUtils.isNotEmpty(UserUtils.getUserDetails())) {
+            //判断非超级管理员则只显示认证通过信息
+            CertificationUserDetails userDetails = UserUtils.getUserDetails();
+            if (userDetails.getUserAuthorities().isEmpty() || (!userDetails.getUserAuthorities().stream().map(StrayAnimalsUserAuthority::getAuthority).collect(Collectors.toList()).contains("ROLE_admin"))) {
+                aidStationQueryWrapper.eq("certification_status", Constants.VOLUNTEER_CERTIFICATION_PASSED);
+            }
+        }
         if (StringUtils.isNotBlank(stationName)) {
             aidStationQueryWrapper.like("station_name", stationName);
         }
