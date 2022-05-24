@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.basicPLY.animals.mapper.StrayAnimalsCommentMapper">
+
+    <resultMap id="BaseResultMap" type="cn.basicPLY.animals.entity.StrayAnimalsComment">
+            <id property="keyId" column="key_id" jdbcType="VARCHAR"/>
+            <result property="dataId" column="data_id" jdbcType="VARCHAR"/>
+            <result property="dataType" column="data_type" jdbcType="TINYINT"/>
+            <result property="commentatorId" column="commentator_id" jdbcType="VARCHAR"/>
+            <result property="commentatorName" column="commentator_name" jdbcType="VARCHAR"/>
+            <result property="commentContent" column="comment_content" jdbcType="VARCHAR"/>
+            <result property="deleteMark" column="delete_mark" jdbcType="TINYINT"/>
+            <result property="createBy" column="create_by" jdbcType="VARCHAR"/>
+            <result property="createDate" column="create_date" jdbcType="TIMESTAMP"/>
+            <result property="updateBy" column="update_by" jdbcType="VARCHAR"/>
+            <result property="updateDate" column="update_date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        key_id,data_id,data_type,
+        commentator_id,commentator_name,comment_content,
+        delete_mark,create_by,create_date,
+        update_by,update_date
+    </sql>
+</mapper>

@@ -76,7 +76,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/certification/**", "/file/**", "/swagger-ui/**",
                         "/swagger-resources/**", "/webjars/**", "/v2/**", "/api/**", "/v3/**",
                         "/adoption/**", "/aidStation/**", "/volunteer/**", "/aidStation/**", "/resource/**",
-                        "/user-management/**", "/volunteer-management/**", "/station-management/**"
+                        "/user-management/**", "/volunteer-management/**", "/station-management/**", "/comment/**"
                 )
                 .permitAll() //permitAll() 所以角色均可访问
                 .anyRequest().authenticated() //authenticated()需要认证访问
