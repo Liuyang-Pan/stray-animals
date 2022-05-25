@@ -68,7 +68,7 @@ public class CommentController {
         log.info("开始执行获取某个数据的评论信息接口");
         QueryWrapper<StrayAnimalsComment> commentQueryWrapper = new QueryWrapper<>();
         commentQueryWrapper.eq(UniversalColumnEnum.UPDATE_DATE.getColumn(), Constants.NOT_DELETED)
-                .eq("date_type", dataType)
+                .eq("data_type", dataType)
                 .eq("data_id", keyId);
         IPage<StrayAnimalsComment> strayAnimalsCommentIPage = commentService.getBaseMapper().selectPage(new Page<>(current, size), commentQueryWrapper);
         return ResponseEntity.ok(AjaxResult.success("获取成功", strayAnimalsCommentIPage));
