@@ -67,7 +67,7 @@ public class CommentController {
                                                  @RequestParam("keyId") String keyId) {
         log.info("开始执行获取某个数据的评论信息接口");
         QueryWrapper<StrayAnimalsComment> commentQueryWrapper = new QueryWrapper<>();
-        commentQueryWrapper.eq(UniversalColumnEnum.UPDATE_DATE.getColumn(), Constants.NOT_DELETED)
+        commentQueryWrapper.eq(UniversalColumnEnum.DELETE_MARK.getColumn(), Constants.NOT_DELETED)
                 .eq("data_type", dataType)
                 .eq("data_id", keyId);
         IPage<StrayAnimalsComment> strayAnimalsCommentIPage = commentService.getBaseMapper().selectPage(new Page<>(current, size), commentQueryWrapper);
