@@ -65,7 +65,8 @@ public class CommentManagementController {
         commentQueryWrapper.eq(StrayAnimalsComment::getDeleteMark, Constants.NOT_DELETED)
                 .like(StringUtils.isNotBlank(comment.getCommentContent()), StrayAnimalsComment::getCommentContent, comment.getCommentContent())
                 .like(StringUtils.isNotBlank(comment.getCommentatorName()), StrayAnimalsComment::getCommentatorName, comment.getCommentatorName())
-                .eq(null != comment.getDataType(), StrayAnimalsComment::getDataType, comment.getDataType());
+                .eq(null != comment.getDataType(), StrayAnimalsComment::getDataType, comment.getDataType())
+                .orderByDesc(StrayAnimalsComment::getCreateBy);
         IPage<StrayAnimalsComment> strayAnimalsCommentIPage = commentService.getBaseMapper().selectPage(new Page<>(comment.getCurrent(), comment.getSize()), commentQueryWrapper);
         return ResponseEntity.ok(AjaxResult.success("获取成功", strayAnimalsCommentIPage));
     }

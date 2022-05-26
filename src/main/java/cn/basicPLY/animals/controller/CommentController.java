@@ -69,7 +69,7 @@ public class CommentController {
         QueryWrapper<StrayAnimalsComment> commentQueryWrapper = new QueryWrapper<>();
         commentQueryWrapper.eq(UniversalColumnEnum.DELETE_MARK.getColumn(), Constants.NOT_DELETED)
                 .eq("data_type", dataType)
-                .eq("data_id", keyId);
+                .eq("data_id", keyId).orderByDesc("create_date");
         IPage<StrayAnimalsComment> strayAnimalsCommentIPage = commentService.getBaseMapper().selectPage(new Page<>(current, size), commentQueryWrapper);
         return ResponseEntity.ok(AjaxResult.success("获取成功", strayAnimalsCommentIPage));
     }
